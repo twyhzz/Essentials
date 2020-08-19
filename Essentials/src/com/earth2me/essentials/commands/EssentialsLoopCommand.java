@@ -33,7 +33,7 @@ public abstract class EssentialsLoopCommand extends EssentialsCommand {
             final User matchedUser = ess.getUser(uuid);
             userConsumer.accept(matchedUser);
         } else if (matchWildcards && searchTerm.contentEquals("**")) {
-            for (UUID sUser : ess.getUserMap().getAllUniqueUsers()) {
+            for (String sUser : ess.getUserMap().getAllUniqueUsers()) {
                 final User matchedUser = ess.getUser(sUser);
                 userConsumer.accept(matchedUser);
             }
