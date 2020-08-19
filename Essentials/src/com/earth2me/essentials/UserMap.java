@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 public class UserMap extends CacheLoader<String, User> implements IConf {
     private final transient IEssentials ess;
-    private final transient ConcurrentSkipListSet<UUID> keys = new ConcurrentSkipListSet<>();
+    private final transient ConcurrentSkipListSet<String> keys = new ConcurrentSkipListSet<>();
     private final transient ConcurrentSkipListMap<String, UUID> names = new ConcurrentSkipListMap<>();
     private final transient ConcurrentSkipListMap<UUID, ArrayList<String>> history = new ConcurrentSkipListMap<>();
     private final UUIDMap uuidMap;
@@ -67,7 +67,7 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
                     }
                     final String name = string.substring(0, string.length() - 4);
                     try {
-                        keys.add(UUID.fromString(name));
+                        keys.add(name);
                     } catch (IllegalArgumentException ex) {
                         //Ignore these users till they rejoin.
                     }
@@ -77,7 +77,7 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
         });
     }
 
-    public boolean userExists(final UUID uuid) {
+    public boolean userExists(final String uuid) {
         return keys.contains(uuid);
     }
 
@@ -115,26 +115,7 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
     }
 
     public void trackUUID(final UUID uuid, final String name, boolean replace) {
-        if (uuid != null) {
-            keys.add(uuid);
-            if (name != null && name.length() > 0) {
-                final String keyName = ess.getSettings().isSafeUsermap() ? StringUtil.safeString(name) : name;
-                if (!names.containsKey(keyName)) {
-                    names.put(keyName, uuid);
-                    uuidMap.writeUUIDMap();
-                } else if (!names.get(keyName).equals(uuid)) {
-                    if (replace) {
-                        ess.getLogger().info("Found new UUID for " + name + ". Replacing " + names.get(keyName).toString() + " with " + uuid.toString());
-                        names.put(keyName, uuid);
-                        uuidMap.writeUUIDMap();
-                    } else {
-                        if (ess.getSettings().isDebug()) {
-                            ess.getLogger().info("Found old UUID for " + name + " (" + uuid.toString() + "). Not adding to usermap.");
-                        }
-                    }
-                }
-            }
-        }
+
     }
 
     @Override
@@ -184,7 +165,7 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
         names.remove(StringUtil.safeString(name));
     }
 
-    public Set<UUID> getAllUniqueUsers() {
+    public Set<String> getAllUniqueUsers() {
         return Collections.unmodifiableSet(keys);
     }
 

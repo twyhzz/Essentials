@@ -36,10 +36,10 @@ public abstract class UserData extends PlayerExtension implements IConf {
 
         String filename;
         try {
-            filename = base.getUniqueId().toString();
+            filename = base.getName().toLowerCase();
         } catch (Throwable ex) {
             ess.getLogger().warning("Falling back to old username system for " + base.getName());
-            filename = base.getName();
+            filename = base.getName().toLowerCase();
         }
 
         config = new EssentialsUserConf(base.getName(), base.getUniqueId(), new File(folder, filename + ".yml"));

@@ -754,7 +754,7 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
             return null;
         }
 
-        User user = userMap.getUser(base.getUniqueId());
+        User user = userMap.getUser(base.getName().toLowerCase());
 
         if (user == null) {
             if (getSettings().isDebug()) {
