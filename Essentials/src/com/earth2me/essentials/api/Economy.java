@@ -69,7 +69,7 @@ public class Economy {
             throw new IllegalArgumentException("Economy username cannot be null");
         }
 
-        User user = ess.getUser(name);
+        User user = ess.getUser(name.toLowerCase());
         if (user == null) {
             /*
                 Attempt lookup using UUID - this prevents balance resets when accessing economy
@@ -78,13 +78,14 @@ public class Economy {
             */
             Player player = ess.getServer().getPlayerExact(name);
             if (player != null) {
-                user = ess.getUser(player.getUniqueId());
+                user = ess.getUser(player.getName().toLowerCase());
                 if (user != null) {
                     logger.info(String.format("[Economy] Found player %s by UUID %s but not by their actual name - they may have changed their username", name, player.getUniqueId().toString()));
                 }
             }
         }
 
+        System.out.println(user);
         return user;
     }
 
@@ -895,7 +896,7 @@ public class Economy {
      */
     @Deprecated
     public static boolean playerExists(String name) {
-        return getUserByName(name) != null;
+        return getUserByName(name.toLowerCase()) != null;
     }
 
     /**
