@@ -93,7 +93,7 @@ public class Commandbalancetop extends EssentialsCommand {
                             ess.getLogger().info("Internal economy functions disabled, aborting baltop.");
                         }
                     } else {
-                        for (UUID u : ess.getUserMap().getAllUniqueUsers()) {
+                        for (String u : ess.getUserMap().getAllUniqueUsers()) {
                             final User user = ess.getUserMap().getUser(u);
                             if (user != null) {
                                 if (!ess.getSettings().isNpcsInBalanceRanking() && user.isNPC()) {

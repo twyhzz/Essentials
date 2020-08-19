@@ -195,7 +195,7 @@ public class Commandseen extends EssentialsCommand {
 
         ess.runTaskAsynchronously(() -> {
             final List<String> matches = new ArrayList<>();
-            for (final UUID u : userMap.getAllUniqueUsers()) {
+            for (final String u : userMap.getAllUniqueUsers()) {
                 final User user = ess.getUserMap().getUser(u);
                 if (user == null) {
                     continue;

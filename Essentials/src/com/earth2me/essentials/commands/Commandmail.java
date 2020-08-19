@@ -150,7 +150,7 @@ public class Commandmail extends EssentialsCommand {
 
         @Override
         public void run() {
-            for (UUID userid : ess.getUserMap().getAllUniqueUsers()) {
+            for (String userid : ess.getUserMap().getAllUniqueUsers()) {
                 User user = ess.getUserMap().getUser(userid);
                 if (user != null) {
                     user.addMail(message);
