@@ -40,12 +40,7 @@ import net.ess3.api.*;
 import net.ess3.nms.refl.providers.ReflServerStateProvider;
 import net.ess3.nms.refl.providers.ReflSpawnEggProvider;
 import net.ess3.nms.refl.providers.ReflSpawnerBlockProvider;
-import net.ess3.provider.PotionMetaProvider;
-import net.ess3.provider.ProviderListener;
-import net.ess3.provider.ServerStateProvider;
-import net.ess3.provider.SpawnEggProvider;
-import net.ess3.provider.SpawnerBlockProvider;
-import net.ess3.provider.SpawnerItemProvider;
+import net.ess3.provider.*;
 import net.ess3.provider.providers.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -53,18 +48,13 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
+import org.bukkit.event.*;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
@@ -75,7 +65,6 @@ import org.bukkit.scheduler.BukkitTask;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -128,31 +117,6 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
     @Override
     public ISettings getSettings() {
         return settings;
-    }
-
-    public void setupForTesting(final Server server) throws IOException, InvalidDescriptionException {
-        final File dataFolder = File.createTempFile("essentialstest", "");
-        if (!dataFolder.delete()) {
-            throw new IOException();
-        }
-        if (!dataFolder.mkdir()) {
-            throw new IOException();
-        }
-        i18n = new I18n(this);
-        i18n.onEnable();
-        i18n.updateLocale("en");
-        Console.setInstance(this);
-
-        LOGGER.log(Level.INFO, tl("usingTempFolderForTesting"));
-        LOGGER.log(Level.INFO, dataFolder.toString());
-        settings = new Settings(this);
-        userMap = new UserMap(this);
-        permissionsHandler = new PermissionsHandler(this, false);
-        Economy.setEss(this);
-        confList = new ArrayList<>();
-        jails = new Jails(this);
-        registerListeners(server.getPluginManager());
-        kits = new Kits(this);
     }
 
     @Override
@@ -723,7 +687,7 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
     //This will return null if there is not a match.
     @Override
     public User getUser(final UUID base) {
-        return userMap.getUser(base);
+        return userMap.getUser(Bukkit.getOfflinePlayer(base).getName());
     }
 
     //This will return null if there is not a match.

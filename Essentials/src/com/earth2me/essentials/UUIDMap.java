@@ -68,6 +68,7 @@ public class UUIDMap {
                         if (values.length == 2) {
                             final String name = values[0];
                             final UUID uuid = UUID.fromString(values[1]);
+                            System.out.println("UUIDMAP Now name " + name + " " + uuid.toString());
                             names.put(name, uuid);
                             if (!history.containsKey(uuid)) {
                                 final ArrayList<String> list = new ArrayList<>();

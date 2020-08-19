@@ -34,8 +34,6 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
         super();
         this.ess = ess;
         uuidMap = new UUIDMap(ess);
-        //RemovalListener<UUID, User> remListener = new UserMapRemovalListener();
-        //users = CacheBuilder.newBuilder().maximumSize(ess.getSettings().getMaxUserCacheCount()).softValues().removalListener(remListener).build(this);
         CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder();
         int maxCount = ess.getSettings().getMaxUserCacheCount();
         try {
@@ -77,37 +75,16 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
         });
     }
 
-    public boolean userExists(final String uuid) {
-        return keys.contains(uuid);
+    public boolean userExists(final String name) {
+        return keys.contains(name);
     }
 
     public User getUser(final String name) {
         try {
-            final String sanitizedName = StringUtil.safeString(name);
-            if (names.containsKey(sanitizedName)) {
-                final UUID uuid = names.get(sanitizedName);
-                return getUser(uuid);
-            }
-
-            final File userFile = getUserFileFromString(sanitizedName);
-            if (userFile.exists()) {
-                ess.getLogger().info("Importing user " + name + " to usermap.");
-                User user = new User(new OfflinePlayer(sanitizedName, ess.getServer()), ess);
-                trackUUID(user.getBase().getUniqueId(), user.getName(), true);
-                return user;
-            }
-            return null;
-        } catch (UncheckedExecutionException ex) {
-            return null;
-        }
-    }
-
-    public User getUser(final UUID uuid) {
-        try {
             if (!legacy) {
-                return ((LoadingCache<String, User>) users).get(uuid.toString());
+                return ((LoadingCache<String, User>) users).get(name);
             } else {
-                return legacyCacheGet(uuid);
+                return legacyCacheGet(name);
             }
         } catch (ExecutionException | UncheckedExecutionException ex) {
             return null;
@@ -115,26 +92,21 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
     }
 
     public void trackUUID(final UUID uuid, final String name, boolean replace) {
-
     }
 
     @Override
-    public User load(final String stringUUID) throws Exception {
-        UUID uuid = UUID.fromString(stringUUID);
-        Player player = ess.getServer().getPlayer(uuid);
+    public User load(final String name) throws Exception {
+        Player player = ess.getServer().getPlayer(name);
         if (player != null) {
-            final User user = new User(player, ess);
-            trackUUID(uuid, user.getName(), true);
-            return user;
+            return new User(player, ess);
         }
 
-        final File userFile = getUserFileFromID(uuid);
+        final File userFile = getUserFileFromName(name);
 
         if (userFile.exists()) {
-            player = new OfflinePlayer(uuid, ess.getServer());
+            player = new OfflinePlayer(name, ess.getServer());
             final User user = new User(player, ess);
             ((OfflinePlayer) player).setName(user.getLastAccountName());
-            trackUUID(uuid, user.getName(), false);
             return user;
         }
 
@@ -156,9 +128,8 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
             ess.getLogger().warning("Name collection is null, cannot remove user.");
             return;
         }
-        UUID uuid = names.get(name);
+        final UUID uuid = names.get(name);
         if (uuid != null) {
-            keys.remove(uuid);
             users.invalidate(uuid.toString());
         }
         names.remove(name);
@@ -189,9 +160,9 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
         return uuidMap;
     }
 
-    private File getUserFileFromID(final UUID uuid) {
+    private File getUserFileFromName(final String name) {
         final File userFolder = new File(ess.getDataFolder(), "userdata");
-        return new File(userFolder, uuid.toString() + ".yml");
+        return new File(userFolder, name + ".yml");
     }
 
     public File getUserFileFromString(final String name) {
@@ -238,13 +209,13 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
             return null;
         } else {
             names.put(name, uuid);
-            return getUser(uuid);
+            return getUser(name);
         }
     }
 
     private static Method getLegacy;
 
-    private User legacyCacheGet(UUID uuid) {
+    private User legacyCacheGet(String uuid) {
         if (getLegacy == null) {
             Class<?> usersClass = users.getClass();
             for (Method m : usersClass.getDeclaredMethods()) {
@@ -256,7 +227,7 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
             }
         }
         try {
-            return (User) getLegacy.invoke(users, uuid.toString());
+            return (User) getLegacy.invoke(users, uuid);
         } catch (IllegalAccessException | InvocationTargetException e) {
             return null;
         }
