@@ -85,7 +85,6 @@ public class Economy {
             }
         }
 
-        System.out.println(user);
         return user;
     }
 
