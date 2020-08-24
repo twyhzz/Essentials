@@ -9,7 +9,7 @@ import java.util.logging.Level;
 
 public class EssentialsTimer implements Runnable {
     private final transient IEssentials ess;
-    private final transient Set<UUID> onlineUsers = new HashSet<>(); // Field is necessary for hidden users
+    private final transient Set<String> onlineUsers = new HashSet<>(); // Field is necessary for hidden users
     private transient long lastPoll = System.nanoTime();
     private final LinkedList<Double> history = new LinkedList<>();
     private int skip1 = 0;
@@ -53,7 +53,7 @@ public class EssentialsTimer implements Runnable {
             }
             try {
                 final User user = ess.getUser(player);
-                onlineUsers.add(user.getBase().getUniqueId());
+                onlineUsers.add(user.getBase().getName());
                 user.setLastOnlineActivity(currentTime);
                 user.checkActivity();
             } catch (Exception e) {
@@ -62,7 +62,7 @@ public class EssentialsTimer implements Runnable {
         }
 
         count = 0;
-        final Iterator<UUID> iterator = onlineUsers.iterator();
+        final Iterator<String> iterator = onlineUsers.iterator();
         while (iterator.hasNext()) {
             count++;
             if (skip2 > 0) {

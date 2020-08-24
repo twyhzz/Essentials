@@ -687,7 +687,11 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
     //This will return null if there is not a match.
     @Override
     public User getUser(final UUID base) {
-        return userMap.getUser(Bukkit.getOfflinePlayer(base).getName());
+        final Player player = Bukkit.getPlayer(base);
+        if(player == null) {
+            return null;
+        }
+        return userMap.getUser(player.getName());
     }
 
     //This will return null if there is not a match.
