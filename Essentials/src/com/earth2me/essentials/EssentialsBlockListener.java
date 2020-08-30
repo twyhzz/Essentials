@@ -17,6 +17,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Locale;
 
+import static com.earth2me.essentials.I18n.tl;
+
 
 public class EssentialsBlockListener implements Listener {
     private final transient IEssentials ess;
@@ -66,8 +68,10 @@ public class EssentialsBlockListener implements Listener {
     public void onPlace(final BlockPlaceEvent event) {
         final Player player = event.getPlayer();
         final User user = ess.getUser(player);
-        if(user.isVanished() || player.isFlying() || user.isGodModeEnabled()) {
+        final GameMode mode = player.getGameMode();
+        if(user.isVanished() || player.isFlying() || user.isGodModeEnabled() || mode != GameMode.SURVIVAL) {
             event.setCancelled(true);
+            player.sendMessage(tl("cannotInMode"));
         }
     }
 
@@ -75,8 +79,10 @@ public class EssentialsBlockListener implements Listener {
     public void onBreak(final BlockBreakEvent event) {
         final Player player = event.getPlayer();
         final User user = ess.getUser(player);
-        if(user.isVanished() || player.isFlying() || user.isGodModeEnabled()) {
+        final GameMode mode = player.getGameMode();
+        if(user.isVanished() || player.isFlying() || user.isGodModeEnabled() || mode != GameMode.SURVIVAL) {
             event.setCancelled(true);
+            player.sendMessage(tl("cannotInMode"));
         }
     }
 

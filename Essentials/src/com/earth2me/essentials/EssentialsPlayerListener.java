@@ -119,8 +119,10 @@ public class EssentialsPlayerListener implements Listener {
 
         if((mainType == Material.SPLASH_POTION || mainType == Material.LINGERING_POTION) ||
                 (offType == Material.SPLASH_POTION || offType == Material.LINGERING_POTION)) {
-            if(user.isVanished() || user.isGodModeEnabled() || player.isFlying()) {
+            final GameMode mode = player.getGameMode();
+            if(user.isVanished() || player.isFlying() || user.isGodModeEnabled() || mode != GameMode.SURVIVAL) {
                 event.setCancelled(true);
+                player.sendMessage(tl("cannotInMode"));
             }
         }
     }
@@ -131,8 +133,18 @@ public class EssentialsPlayerListener implements Listener {
         if(!(entity instanceof Player)) {
             return;
         }
+        final Player player = (Player) entity;
 
-        if(!ModeCooldowns.isExpired((Player) entity)) {
+        final User user = ess.getUser(player);
+        final GameMode mode = player.getGameMode();
+        if(user.isVanished() || player.isFlying() || user.isGodModeEnabled() || mode != GameMode.SURVIVAL) {
+            event.setCancelled(true);
+            player.sendMessage(tl("cannotInMode"));
+            return;
+        }
+
+        if(!ModeCooldowns.isExpired(player)) {
+            player.sendMessage(tl("cooldownAfterSwitch"));
             event.setCancelled(true);
         }
     }

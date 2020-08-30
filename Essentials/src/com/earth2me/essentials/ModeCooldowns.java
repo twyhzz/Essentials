@@ -24,7 +24,7 @@ public class ModeCooldowns {
     }
 
     public static boolean isExpired(final Player player) {
-        final boolean state = cooldowns.getOrDefault(player, 0L) >= System.currentTimeMillis();
+        final boolean state = cooldowns.getOrDefault(player, 0L) <= System.currentTimeMillis();
         if(state) remove(player);
         return state;
     }

@@ -2,6 +2,7 @@ package com.earth2me.essentials;
 
 import com.earth2me.essentials.utils.VersionUtil;
 import net.ess3.api.IEssentials;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -72,8 +73,10 @@ public class EssentialsEntityListener implements Listener {
         }
         final Player player = (Player) entity;
         final User user = ess.getUser(player);
-        if(user.isVanished() || player.isFlying() || user.isGodModeEnabled()) {
+        final GameMode mode = player.getGameMode();
+        if(user.isVanished() || player.isFlying() || user.isGodModeEnabled() || mode != GameMode.SURVIVAL) {
             event.setCancelled(true);
+            player.sendMessage(tl("cannotInMode"));
         }
     }
 
@@ -81,8 +84,10 @@ public class EssentialsEntityListener implements Listener {
     public void onDrop(final PlayerDropItemEvent event) {
         final Player player = event.getPlayer();
         final User user = ess.getUser(player);
-        if(user.isVanished() || player.isFlying() || user.isGodModeEnabled()) {
+        final GameMode mode = player.getGameMode();
+        if(user.isVanished() || player.isFlying() || user.isGodModeEnabled() || mode != GameMode.SURVIVAL) {
             event.setCancelled(true);
+            player.sendMessage(tl("cannotInMode"));
         }
     }
 
