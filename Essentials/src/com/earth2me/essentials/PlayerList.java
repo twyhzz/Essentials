@@ -107,13 +107,13 @@ public class PlayerList {
             throw new Exception(tl("groupDoesNotExist"));
         }
         String displayGroupName = Character.toTitleCase(groupName.charAt(0)) +
-            groupName.substring(1);
+                groupName.substring(1);
         return outputFormat(displayGroupName, listUsers(ess, users, ", "));
     }
 
     // Build the output string
     public static String outputFormat(final String group, final String message) {
         return tl("listGroupTag", FormatUtil.replaceFormat(group)) +
-            message;
+                message;
     }
 }

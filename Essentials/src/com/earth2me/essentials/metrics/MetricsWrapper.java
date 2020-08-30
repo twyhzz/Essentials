@@ -13,13 +13,12 @@ import java.util.Map;
 
 public class MetricsWrapper {
 
+    private static final List<String> KNOWN_FORCED_METRICS = ImmutableList.of("ChatControl");
+    private static boolean hasWarned = false;
     private final Essentials ess;
     private final Metrics metrics;
     private final Map<String, Boolean> commands = new HashMap<>();
     private final Plugin plugin;
-
-    private static boolean hasWarned = false;
-    private static final List<String> KNOWN_FORCED_METRICS = ImmutableList.of("ChatControl");
 
     public MetricsWrapper(Plugin plugin, int pluginId, boolean includeCommands) {
         this.plugin = plugin;
@@ -93,9 +92,9 @@ public class MetricsWrapper {
             Map<String, int[]> result = new HashMap<>();
             for (Map.Entry<String, Boolean> entry : commands.entrySet()) {
                 if (entry.getValue()) {
-                    result.put(entry.getKey(), new int[]{1,0});
+                    result.put(entry.getKey(), new int[]{1, 0});
                 } else {
-                    result.put(entry.getKey(), new int[]{0,1});
+                    result.put(entry.getKey(), new int[]{0, 1});
                 }
             }
             return result;
@@ -127,7 +126,8 @@ public class MetricsWrapper {
                             warnForcedMetrics(service);
                         }
                     }
-                } catch (NoSuchFieldException ignored) {}
+                } catch (NoSuchFieldException ignored) {
+                }
             }
         });
     }

@@ -13,11 +13,11 @@ import static com.earth2me.essentials.I18n.tl;
 
 public class LocalChatSpyEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
+    private final Set<Player> recipients;
     private boolean cancelled = false;
     private String message;
     private String format;
     private Player player;
-    private final Set<Player> recipients;
 
     public LocalChatSpyEvent(final boolean async, final Player who, final String format, final String message, final Set<Player> players) {
         super(async);
@@ -25,6 +25,10 @@ public class LocalChatSpyEvent extends Event implements Cancellable {
         this.message = message;
         recipients = players;
         player = who;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     /**
@@ -60,7 +64,6 @@ public class LocalChatSpyEvent extends Event implements Cancellable {
      * parameter is the {@link Player#getDisplayName()} and the second parameter is {@link #getMessage()}
      *
      * @param format {@link String#format(String, Object...)} compatible format string
-     *
      * @throws IllegalFormatException if the underlying API throws the exception
      * @throws NullPointerException   if format is null
      * @see String#format(String, Object...)
@@ -107,10 +110,6 @@ public class LocalChatSpyEvent extends Event implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

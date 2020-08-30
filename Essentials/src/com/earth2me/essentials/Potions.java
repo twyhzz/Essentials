@@ -124,7 +124,8 @@ public class Potions {
 
             POTIONS.put("luck", PotionEffectType.LUCK);
             POTIONS.put("unluck", PotionEffectType.UNLUCK);
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
     }
 
     public static PotionEffectType getByName(String name) {

@@ -18,11 +18,11 @@ import static com.earth2me.essentials.I18n.tl;
 
 public class Commandclearinventory extends EssentialsLoopCommand {
 
+    private static final int BASE_AMOUNT = 100000;
+
     public Commandclearinventory() {
         super("clearinventory");
     }
-
-    private static final int BASE_AMOUNT = 100000;
 
     @Override
     public void run(Server server, User user, String commandLabel, String[] args) throws Exception {
@@ -63,28 +63,6 @@ public class Commandclearinventory extends EssentialsLoopCommand {
         clearHandler(sender, player.getBase(), args, 1);
     }
 
-    private static class Item {
-        private final Material material;
-        private final short data;
-
-        public Item(Material material, short data) {
-            this.material = material;
-            this.data = data;
-        }
-
-        public Material getMaterial() {
-            return material;
-        }
-
-        public short getData() {
-            return data;
-        }
-    }
-
-    private enum ClearHandlerType {
-        ALL_EXCEPT_ARMOR, ALL_INCLUDING_ARMOR, SPECIFIC_ITEM
-    }
-
     protected void clearHandler(CommandSource sender, Player player, String[] args, int offset) {
         ClearHandlerType type = ClearHandlerType.ALL_EXCEPT_ARMOR;
         final Set<Item> items = new HashSet<>();
@@ -108,7 +86,8 @@ public class Commandclearinventory extends EssentialsLoopCommand {
                     }
                     try {
                         items.add(new Item(ess.getItemDb().get(itemParts[0]).getType(), data));
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 }
                 type = ClearHandlerType.SPECIFIC_ITEM;
             }
@@ -196,5 +175,27 @@ public class Commandclearinventory extends EssentialsLoopCommand {
 
     private String formatCommand(String commandLabel, String[] args) {
         return "/" + commandLabel + " " + StringUtil.joinList(" ", args);
+    }
+
+    private enum ClearHandlerType {
+        ALL_EXCEPT_ARMOR, ALL_INCLUDING_ARMOR, SPECIFIC_ITEM
+    }
+
+    private static class Item {
+        private final Material material;
+        private final short data;
+
+        public Item(Material material, short data) {
+            this.material = material;
+            this.data = data;
+        }
+
+        public Material getMaterial() {
+            return material;
+        }
+
+        public short getData() {
+            return data;
+        }
     }
 }

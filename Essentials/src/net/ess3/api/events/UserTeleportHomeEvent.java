@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Called when a user is teleported home via the /home command.
- *
+ * <p>
  * This is called before {@link net.ess3.api.events.teleport.TeleportWarmupEvent TeleportWarmupEvent}.
  */
 public class UserTeleportHomeEvent extends Event implements Cancellable {
@@ -27,6 +27,10 @@ public class UserTeleportHomeEvent extends Event implements Cancellable {
         this.homeType = homeType;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     /**
      * Returns the user who is being teleported
      *
@@ -38,7 +42,7 @@ public class UserTeleportHomeEvent extends Event implements Cancellable {
 
     /**
      * Returns the name of the home being teleported to.
-     *
+     * <p>
      * The behavior of this method varies based on the {@link HomeType} as follows;
      * {@link HomeType#HOME}  - Returns name of home being teleported to.
      * {@link HomeType#BED}   - Returns "bed".
@@ -61,7 +65,7 @@ public class UserTeleportHomeEvent extends Event implements Cancellable {
 
     /**
      * Returns the home location type.
-     *
+     * <p>
      * {@link HomeType#HOME}  - A user-set home location.
      * {@link HomeType#BED}   - A user's bed location.
      * {@link HomeType#SPAWN} - The user's current world spawn.
@@ -84,10 +88,6 @@ public class UserTeleportHomeEvent extends Event implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 

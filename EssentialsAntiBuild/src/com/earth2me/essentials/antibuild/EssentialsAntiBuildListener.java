@@ -222,8 +222,8 @@ public class EssentialsAntiBuildListener implements Listener {
 
         if (event.getDamager() instanceof Player) {
             player = (Player) event.getDamager();
-        } else if (event.getDamager() instanceof Projectile && ((Projectile)event.getDamager()).getShooter() instanceof Player) {
-            player = (Player) ((Projectile)event.getDamager()).getShooter();
+        } else if (event.getDamager() instanceof Projectile && ((Projectile) event.getDamager()).getShooter() instanceof Player) {
+            player = (Player) ((Projectile) event.getDamager()).getShooter();
         } else {
             return;
         }

@@ -27,6 +27,7 @@ import static com.earth2me.essentials.I18n.tl;
 
 
 public class Trade {
+    private static FileWriter fw = null;
     private final transient String command;
     private final transient Trade fallbackTrade;
     private final transient BigDecimal money;
@@ -34,19 +35,6 @@ public class Trade {
     private final transient Integer exp;
     private final transient IEssentials ess;
 
-
-    public enum TradeType {
-        MONEY,
-        EXP,
-        ITEM
-    }
-
-
-    public enum OverflowType {
-        ABORT,
-        DROP,
-        RETURN
-    }
 
     public Trade(final String command, final IEssentials ess) {
         this(command, null, null, null, null, ess);
@@ -82,6 +70,100 @@ public class Trade {
         this.ess = ess;
     }
 
+    public static void log(String type, String subtype, String event, String sender, Trade charge, String receiver, Trade pay, Location loc, IEssentials ess) {
+        //isEcoLogUpdateEnabled() - This refers to log entries with no location, ie API updates #EasterEgg
+        //isEcoLogEnabled() - This refers to log entries with with location, ie /pay /sell and eco signs.
+
+        if ((loc == null && !ess.getSettings().isEcoLogUpdateEnabled()) || (loc != null && !ess.getSettings().isEcoLogEnabled())) {
+            return;
+        }
+        if (fw == null) {
+            try {
+                fw = new FileWriter(new File(ess.getDataFolder(), "trade.log"), true);
+            } catch (IOException ex) {
+                Logger.getLogger("Essentials").log(Level.SEVERE, null, ex);
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(type).append(",").append(subtype).append(",").append(event).append(",\"");
+        sb.append(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(new Date()));
+        sb.append("\",\"");
+        if (sender != null) {
+            sb.append(sender);
+        }
+        sb.append("\",");
+        if (charge == null) {
+            sb.append("\"\",\"\",\"\"");
+        } else {
+            if (charge.getItemStack() != null) {
+                sb.append(charge.getItemStack().getAmount()).append(",");
+                sb.append(charge.getItemStack().getType().toString()).append(",");
+                sb.append(charge.getItemStack().getDurability());
+            }
+            if (charge.getMoney() != null) {
+                sb.append(charge.getMoney()).append(",");
+                sb.append("money").append(",");
+                sb.append(ess.getSettings().getCurrencySymbol());
+            }
+            if (charge.getExperience() != null) {
+                sb.append(charge.getExperience()).append(",");
+                sb.append("exp").append(",");
+                sb.append("\"\"");
+            }
+        }
+        sb.append(",\"");
+        if (receiver != null) {
+            sb.append(receiver);
+        }
+        sb.append("\",");
+        if (pay == null) {
+            sb.append("\"\",\"\",\"\"");
+        } else {
+            if (pay.getItemStack() != null) {
+                sb.append(pay.getItemStack().getAmount()).append(",");
+                sb.append(pay.getItemStack().getType().toString()).append(",");
+                sb.append(pay.getItemStack().getDurability());
+            }
+            if (pay.getMoney() != null) {
+                sb.append(pay.getMoney()).append(",");
+                sb.append("money").append(",");
+                sb.append(ess.getSettings().getCurrencySymbol());
+            }
+            if (pay.getExperience() != null) {
+                sb.append(pay.getExperience()).append(",");
+                sb.append("exp").append(",");
+                sb.append("\"\"");
+            }
+        }
+        if (loc == null) {
+            sb.append(",\"\",\"\",\"\",\"\"");
+        } else {
+            sb.append(",\"");
+            sb.append(loc.getWorld().getName()).append("\",");
+            sb.append(loc.getBlockX()).append(",");
+            sb.append(loc.getBlockY()).append(",");
+            sb.append(loc.getBlockZ()).append(",");
+        }
+        sb.append("\n");
+        try {
+            fw.write(sb.toString());
+            fw.flush();
+        } catch (IOException ex) {
+            Logger.getLogger("Essentials").log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void closeLog() {
+        if (fw != null) {
+            try {
+                fw.close();
+            } catch (IOException ex) {
+                Logger.getLogger("Essentials").log(Level.SEVERE, null, ex);
+            }
+            fw = null;
+        }
+    }
+
     public void isAffordableFor(final IUser user) throws ChargeException {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         isAffordableFor(user, future);
@@ -95,7 +177,6 @@ public class Trade {
             }
         }
     }
-
 
     public void isAffordableFor(final IUser user, CompletableFuture<Boolean> future) {
         if (ess.getSettings().isDebug()) {
@@ -298,99 +379,15 @@ public class Trade {
         return cost;
     }
 
-    private static FileWriter fw = null;
-
-    public static void log(String type, String subtype, String event, String sender, Trade charge, String receiver, Trade pay, Location loc, IEssentials ess) {
-        //isEcoLogUpdateEnabled() - This refers to log entries with no location, ie API updates #EasterEgg
-        //isEcoLogEnabled() - This refers to log entries with with location, ie /pay /sell and eco signs.
-
-        if ((loc == null && !ess.getSettings().isEcoLogUpdateEnabled()) || (loc != null && !ess.getSettings().isEcoLogEnabled())) {
-            return;
-        }
-        if (fw == null) {
-            try {
-                fw = new FileWriter(new File(ess.getDataFolder(), "trade.log"), true);
-            } catch (IOException ex) {
-                Logger.getLogger("Essentials").log(Level.SEVERE, null, ex);
-            }
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append(type).append(",").append(subtype).append(",").append(event).append(",\"");
-        sb.append(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(new Date()));
-        sb.append("\",\"");
-        if (sender != null) {
-            sb.append(sender);
-        }
-        sb.append("\",");
-        if (charge == null) {
-            sb.append("\"\",\"\",\"\"");
-        } else {
-            if (charge.getItemStack() != null) {
-                sb.append(charge.getItemStack().getAmount()).append(",");
-                sb.append(charge.getItemStack().getType().toString()).append(",");
-                sb.append(charge.getItemStack().getDurability());
-            }
-            if (charge.getMoney() != null) {
-                sb.append(charge.getMoney()).append(",");
-                sb.append("money").append(",");
-                sb.append(ess.getSettings().getCurrencySymbol());
-            }
-            if (charge.getExperience() != null) {
-                sb.append(charge.getExperience()).append(",");
-                sb.append("exp").append(",");
-                sb.append("\"\"");
-            }
-        }
-        sb.append(",\"");
-        if (receiver != null) {
-            sb.append(receiver);
-        }
-        sb.append("\",");
-        if (pay == null) {
-            sb.append("\"\",\"\",\"\"");
-        } else {
-            if (pay.getItemStack() != null) {
-                sb.append(pay.getItemStack().getAmount()).append(",");
-                sb.append(pay.getItemStack().getType().toString()).append(",");
-                sb.append(pay.getItemStack().getDurability());
-            }
-            if (pay.getMoney() != null) {
-                sb.append(pay.getMoney()).append(",");
-                sb.append("money").append(",");
-                sb.append(ess.getSettings().getCurrencySymbol());
-            }
-            if (pay.getExperience() != null) {
-                sb.append(pay.getExperience()).append(",");
-                sb.append("exp").append(",");
-                sb.append("\"\"");
-            }
-        }
-        if (loc == null) {
-            sb.append(",\"\",\"\",\"\",\"\"");
-        } else {
-            sb.append(",\"");
-            sb.append(loc.getWorld().getName()).append("\",");
-            sb.append(loc.getBlockX()).append(",");
-            sb.append(loc.getBlockY()).append(",");
-            sb.append(loc.getBlockZ()).append(",");
-        }
-        sb.append("\n");
-        try {
-            fw.write(sb.toString());
-            fw.flush();
-        } catch (IOException ex) {
-            Logger.getLogger("Essentials").log(Level.SEVERE, null, ex);
-        }
+    public enum TradeType {
+        MONEY,
+        EXP,
+        ITEM
     }
 
-    public static void closeLog() {
-        if (fw != null) {
-            try {
-                fw.close();
-            } catch (IOException ex) {
-                Logger.getLogger("Essentials").log(Level.SEVERE, null, ex);
-            }
-            fw = null;
-        }
+    public enum OverflowType {
+        ABORT,
+        DROP,
+        RETURN
     }
 }

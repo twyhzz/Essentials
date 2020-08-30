@@ -25,6 +25,43 @@ import static com.earth2me.essentials.I18n.tl;
 public abstract class UserData extends PlayerExtension implements IConf {
     protected final transient IEssentials ess;
     private final EssentialsUserConf config;
+    private BigDecimal money;
+    private Map<String, Object> homes;
+    private String nickname;
+    private Set<Material> unlimited;
+    private Map<String, Object> powertools;
+    private Location lastLocation;
+    private Location logoutLocation;
+    private long lastTeleportTimestamp;
+    private long lastHealTimestamp;
+    private String jail;
+    private List<String> mails;
+    private boolean teleportEnabled;
+    private boolean autoTeleportEnabled;
+    private List<UUID> ignoredPlayers;
+    private boolean godmode;
+    private boolean muted;
+    private String muteReason;
+    private long muteTimeout;
+    private boolean jailed;
+    private long jailTimeout;
+    private long lastLogin;
+    private long lastLogout;
+    private String lastLoginAddress;
+    private boolean afk;
+    private boolean newplayer;
+    private String geolocation;
+    private boolean isSocialSpyEnabled;
+    private boolean isNPC;
+    private String lastAccountName = null;
+    private boolean arePowerToolsEnabled;
+    private Map<String, Long> kitTimestamps;
+    // Pattern, Date. Pattern for less pattern creations
+    private Map<Pattern, Long> commandCooldowns;
+    private boolean acceptingPay = true; // players accept pay by default
+    private Boolean confirmPay;
+    private Boolean confirmClear;
+    private boolean lastMessageReplyRecipient;
 
     protected UserData(Player base, IEssentials ess) {
         super(base);
@@ -97,8 +134,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         lastMessageReplyRecipient = _getLastMessageReplyRecipient();
     }
 
-    private BigDecimal money;
-
     private BigDecimal _getMoney() {
         BigDecimal result = ess.getSettings().getStartingBalance();
         BigDecimal maxMoney = ess.getSettings().getMaxMoney();
@@ -142,8 +177,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.setProperty("money", money);
         stopTransaction();
     }
-
-    private Map<String, Object> homes;
 
     private Map<String, Object> _getHomes() {
         if (config.isConfigurationSection("homes")) {
@@ -221,8 +254,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         return config.hasProperty("homes." + name);
     }
 
-    private String nickname;
-
     public String _getNickname() {
         return config.getString("nickname");
     }
@@ -237,14 +268,12 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.save();
     }
 
-    private Set<Material> unlimited;
-
     private Set<Material> _getUnlimited() {
         Set<Material> retlist = new HashSet<>();
         List<String> configList = config.getStringList("unlimited");
-        for(String s : configList) {
+        for (String s : configList) {
             Material mat = Material.matchMaterial(s);
-            if(mat != null) {
+            if (mat != null) {
                 retlist.add(mat);
             }
         }
@@ -277,8 +306,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.setProperty("unlimited", unlimited.stream().map(Enum::name).collect(Collectors.toList()));
         config.save();
     }
-
-    private Map<String, Object> powertools;
 
     private Map<String, Object> _getPowertools() {
         if (config.isConfigurationSection("powertools")) {
@@ -317,8 +344,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         return !powertools.isEmpty();
     }
 
-    private Location lastLocation;
-
     private Location _getLastLocation() {
         try {
             return config.getLocation("lastlocation", this.getBase().getServer());
@@ -339,8 +364,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.setProperty("lastlocation", loc);
         config.save();
     }
-
-    private Location logoutLocation;
 
     private Location _getLogoutLocation() {
         try {
@@ -363,8 +386,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.save();
     }
 
-    private long lastTeleportTimestamp;
-
     private long _getLastTeleportTimestamp() {
         return config.getLong("timestamps.lastteleport", 0);
     }
@@ -379,8 +400,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.save();
     }
 
-    private long lastHealTimestamp;
-
     private long _getLastHealTimestamp() {
         return config.getLong("timestamps.lastheal", 0);
     }
@@ -394,8 +413,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.setProperty("timestamps.lastheal", time);
         config.save();
     }
-
-    private String jail;
 
     private String _getJail() {
         return config.getString("jail");
@@ -415,8 +432,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         }
         config.save();
     }
-
-    private List<String> mails;
 
     private List<String> _getMails() {
         return config.getStringList("mail");
@@ -442,8 +457,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         setMails(mails);
     }
 
-    private boolean teleportEnabled;
-
     private boolean _getTeleportEnabled() {
         return config.getBoolean("teleportenabled", true);
     }
@@ -457,8 +470,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.setProperty("teleportenabled", set);
         config.save();
     }
-
-    private boolean autoTeleportEnabled;
 
     private boolean _getAutoTeleportEnabled() {
         return config.getBoolean("teleportauto", false);
@@ -474,14 +485,13 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.save();
     }
 
-    private List<UUID> ignoredPlayers;
-
     public List<UUID> _getIgnoredPlayers() {
         List<UUID> players = new ArrayList<>();
         for (String uuid : config.getStringList("ignore")) {
             try {
                 players.add(UUID.fromString(uuid));
-            } catch (IllegalArgumentException ignored) {}
+            } catch (IllegalArgumentException ignored) {
+            }
         }
         return Collections.synchronizedList(players);
     }
@@ -539,8 +549,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         setIgnoredPlayerUUIDs(ignoredPlayers);
     }
 
-    private boolean godmode;
-
     private boolean _getGodModeEnabled() {
         return config.getBoolean("godmode", false);
     }
@@ -554,9 +562,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.setProperty("godmode", set);
         config.save();
     }
-
-    private boolean muted;
-    private String muteReason;
 
     public boolean _getMuted() {
         return config.getBoolean("muted", false);
@@ -595,11 +600,9 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.save();
     }
 
-    public boolean hasMuteReason(){
+    public boolean hasMuteReason() {
         return muteReason != null;
     }
-
-    private long muteTimeout;
 
     private long _getMuteTimeout() {
         return config.getLong("timestamps.mute", 0);
@@ -614,8 +617,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.setProperty("timestamps.mute", time);
         config.save();
     }
-
-    private boolean jailed;
 
     private boolean _getJailed() {
         return config.getBoolean("jailed", false);
@@ -637,8 +638,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         return ret;
     }
 
-    private long jailTimeout;
-
     private long _getJailTimeout() {
         return config.getLong("timestamps.jail", 0);
     }
@@ -653,19 +652,12 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.save();
     }
 
-    private long lastLogin;
-
     private long _getLastLogin() {
         return config.getLong("timestamps.login", 0);
     }
 
     public long getLastLogin() {
         return lastLogin;
-    }
-
-    private void _setLastLogin(long time) {
-        lastLogin = time;
-        config.setProperty("timestamps.login", time);
     }
 
     public void setLastLogin(long time) {
@@ -676,7 +668,10 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.save();
     }
 
-    private long lastLogout;
+    private void _setLastLogin(long time) {
+        lastLogin = time;
+        config.setProperty("timestamps.login", time);
+    }
 
     private long _getLastLogout() {
         return config.getLong("timestamps.logout", 0);
@@ -692,8 +687,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.save();
     }
 
-    private String lastLoginAddress;
-
     private String _getLastLoginAddress() {
         return config.getString("ipAddress", "");
     }
@@ -706,8 +699,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         lastLoginAddress = address;
         config.setProperty("ipAddress", address);
     }
-
-    private boolean afk;
 
     private boolean _getAfk() {
         return config.getBoolean("afk", false);
@@ -722,9 +713,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.setProperty("afk", set);
         config.save();
     }
-
-    private boolean newplayer;
-    private String geolocation;
 
     private String _getGeoLocation() {
         return config.getString("geolocation");
@@ -745,8 +733,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.save();
     }
 
-    private boolean isSocialSpyEnabled;
-
     private boolean _isSocialSpyEnabled() {
         return config.getBoolean("socialspy", false);
     }
@@ -761,8 +747,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.save();
     }
 
-    private boolean isNPC;
-
     private boolean _isNPC() {
         return config.getBoolean("npc", false);
     }
@@ -771,14 +755,14 @@ public abstract class UserData extends PlayerExtension implements IConf {
         return isNPC;
     }
 
-    private String lastAccountName = null;
+    public void setNPC(boolean set) {
+        isNPC = set;
+        config.setProperty("npc", set);
+        config.save();
+    }
 
     public String getLastAccountName() {
         return lastAccountName;
-    }
-
-    public String _getLastAccountName() {
-        return config.getString("lastAccountName", null);
     }
 
     public void setLastAccountName(String lastAccountName) {
@@ -788,13 +772,9 @@ public abstract class UserData extends PlayerExtension implements IConf {
         ess.getUserMap().trackUUID(getConfigUUID(), lastAccountName, true);
     }
 
-    public void setNPC(boolean set) {
-        isNPC = set;
-        config.setProperty("npc", set);
-        config.save();
+    public String _getLastAccountName() {
+        return config.getString("lastAccountName", null);
     }
-
-    private boolean arePowerToolsEnabled;
 
     public boolean arePowerToolsEnabled() {
         return arePowerToolsEnabled;
@@ -815,8 +795,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
     private boolean _arePowerToolsEnabled() {
         return config.getBoolean("powertoolsenabled", true);
     }
-
-    private Map<String, Long> kitTimestamps;
 
     private Map<String, Long> _getKitTimestamps() {
 
@@ -888,9 +866,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         return new HashMap<>();
     }
 
-    // Pattern, Date. Pattern for less pattern creations
-    private Map<Pattern, Long> commandCooldowns;
-
     private Map<Pattern, Long> _getCommandCooldowns() {
         if (!config.contains("timestamps.command-cooldowns")) {
             return null;
@@ -940,7 +915,7 @@ public abstract class UserData extends PlayerExtension implements IConf {
             return false; // false for no modification
         }
 
-        if(this.commandCooldowns.remove(pattern) != null) {
+        if (this.commandCooldowns.remove(pattern) != null) {
             saveCommandCooldowns();
             return true;
         }
@@ -962,16 +937,14 @@ public abstract class UserData extends PlayerExtension implements IConf {
             }
 
             Map<?, ?> map = ImmutableMap.builder()
-                .put("pattern", entry.getKey().pattern())
-                .put("expiry", entry.getValue())
-                .build();
+                    .put("pattern", entry.getKey().pattern())
+                    .put("expiry", entry.getValue())
+                    .build();
             serialized.add(map);
         }
         config.setProperty("timestamps.command-cooldowns", serialized);
         save();
     }
-
-    private boolean acceptingPay = true; // players accept pay by default
 
     public boolean _getAcceptingPay() {
         return config.getBoolean("acceptingPay", true);
@@ -987,8 +960,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         save();
     }
 
-    private Boolean confirmPay;
-
     private Boolean _getConfirmPay() {
         return (Boolean) config.get("confirm-pay");
     }
@@ -1003,8 +974,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         save();
     }
 
-    private Boolean confirmClear;
-
     private Boolean _getConfirmClear() {
         return (Boolean) config.get("confirm-clear");
     }
@@ -1018,8 +987,6 @@ public abstract class UserData extends PlayerExtension implements IConf {
         config.setProperty("confirm-clear", prompt);
         save();
     }
-
-    private boolean lastMessageReplyRecipient;
 
     private boolean _getLastMessageReplyRecipient() {
         return config.getBoolean("last-message-reply-recipient", ess.getSettings().isLastMessageReplyRecipient());

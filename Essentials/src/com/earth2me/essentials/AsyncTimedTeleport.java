@@ -17,10 +17,8 @@ public class AsyncTimedTeleport implements Runnable {
     private final IEssentials ess;
     private final AsyncTeleport teleport;
     private final UUID timer_teleportee;
-    private int timer_task;
     private final long timer_started; // time this task was initiated
     private final long timer_delay; // how long to delay the teleportPlayer
-    private double timer_health;
     // note that I initially stored a clone of the location for reference, but...
     // when comparing locations, I got incorrect mismatches (rounding errors, looked like)
     // so, the X/Y/Z values are stored instead and rounded off
@@ -32,6 +30,8 @@ public class AsyncTimedTeleport implements Runnable {
     private final boolean timer_canMove;
     private final Trade timer_chargeFor;
     private final TeleportCause timer_cause;
+    private int timer_task;
+    private double timer_health;
 
     AsyncTimedTeleport(IUser user, IEssentials ess, AsyncTeleport teleport, long delay, IUser teleportUser, ITarget target, Trade chargeFor, TeleportCause cause, boolean respawn) {
         this.teleportOwner = user;

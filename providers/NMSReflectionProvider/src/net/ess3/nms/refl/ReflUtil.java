@@ -16,10 +16,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ReflUtil {
+    public static final NMSVersion V1_12_R1 = NMSVersion.fromString("v1_12_R1");
     public static final NMSVersion V1_8_R1 = NMSVersion.fromString("v1_8_R1");
     public static final NMSVersion V1_9_R1 = NMSVersion.fromString("v1_9_R1");
     public static final NMSVersion V1_11_R1 = NMSVersion.fromString("v1_11_R1");
-    public static final NMSVersion V1_12_R1 = NMSVersion.fromString("v1_12_R1");
+    private static final Map<String, Class<?>> classCache = new HashMap<>();
+    private static final Table<Class<?>, String, Method> methodCache = HashBasedTable.create();
+    private static final Table<Class<?>, MethodParams, Method> methodParamCache = HashBasedTable.create();
+    private static final Table<Class<?>, String, Field> fieldCache = HashBasedTable.create();
+    private static final Map<Class<?>, Constructor<?>> constructorCache = new HashMap<>();
+    private static final Table<Class<?>, ConstructorParams, Constructor<?>> constructorParamCache = HashBasedTable.create();
     private static NMSVersion nmsVersionObject;
     private static String nmsVersion;
 
@@ -47,8 +53,6 @@ public class ReflUtil {
         return getClassCached("org.bukkit.craftbukkit." + getNMSVersion() + "." + className);
     }
 
-    private static final Map<String, Class<?>> classCache = new HashMap<>();
-
     public static Class<?> getClassCached(String className) {
         if (classCache.containsKey(className)) {
             return classCache.get(className);
@@ -61,8 +65,6 @@ public class ReflUtil {
             return null;
         }
     }
-
-    private static final Table<Class<?>, String, Method> methodCache = HashBasedTable.create();
 
     public static Method getMethodCached(Class<?> clazz, String methodName) {
         if (methodCache.contains(clazz, methodName)) {
@@ -77,8 +79,6 @@ public class ReflUtil {
             return null;
         }
     }
-
-    private static final Table<Class<?>, MethodParams, Method> methodParamCache = HashBasedTable.create();
 
     public static Method getMethodCached(Class<?> clazz, String methodName, Class<?>... params) {
         MethodParams methodParams = new MethodParams(methodName, params);
@@ -95,8 +95,6 @@ public class ReflUtil {
         }
     }
 
-    private static final Table<Class<?>, String, Field> fieldCache = HashBasedTable.create();
-
     public static Field getFieldCached(Class<?> clazz, String fieldName) {
         if (fieldCache.contains(clazz, fieldName)) {
             return fieldCache.get(clazz, fieldName);
@@ -111,8 +109,6 @@ public class ReflUtil {
         }
     }
 
-    private static final Map<Class<?>, Constructor<?>> constructorCache = new HashMap<>();
-
     public static Constructor<?> getConstructorCached(Class<?> clazz) {
         if (constructorCache.containsKey(clazz)) {
             return constructorCache.get(clazz);
@@ -126,8 +122,6 @@ public class ReflUtil {
             return null;
         }
     }
-
-    private static final Table<Class<?>, ConstructorParams, Constructor<?>> constructorParamCache = HashBasedTable.create();
 
     public static Constructor<?> getConstructorCached(Class<?> clazz, Class<?>... params) {
         ConstructorParams constructorParams = new ConstructorParams(params);
@@ -228,6 +222,12 @@ public class ReflUtil {
         private final int minor;
         private final int release;
 
+        private NMSVersion(int major, int minor, int release) {
+            this.major = major;
+            this.minor = minor;
+            this.release = release;
+        }
+
         public static NMSVersion fromString(String string) {
             Preconditions.checkNotNull(string, "string cannot be null.");
             Matcher matcher = VERSION_PATTERN.matcher(string);
@@ -239,12 +239,6 @@ public class ReflUtil {
                 Preconditions.checkArgument(matcher.matches(), string + " is not in valid version format. e.g. v1_10_R1");
             }
             return new NMSVersion(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)));
-        }
-
-        private NMSVersion(int major, int minor, int release) {
-            this.major = major;
-            this.minor = minor;
-            this.release = release;
         }
 
         public boolean isHigherThan(NMSVersion o) {

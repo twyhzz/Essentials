@@ -1,7 +1,6 @@
 package net.ess3.api.events;
 
 import com.google.common.base.Preconditions;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -30,12 +29,12 @@ public class UserBalanceUpdateEvent extends Event {
         this.cause = cause;
     }
 
-    @Override
-    public HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 
-    public static HandlerList getHandlerList() {
+    @Override
+    public HandlerList getHandlers() {
         return handlers;
     }
 
@@ -46,7 +45,7 @@ public class UserBalanceUpdateEvent extends Event {
     public BigDecimal getNewBalance() {
         return balance;
     }
-    
+
     public void setNewBalance(BigDecimal newBalance) {
         Preconditions.checkNotNull(newBalance, "newBalance cannot be null.");
         this.balance = newBalance;

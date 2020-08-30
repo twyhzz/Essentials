@@ -40,12 +40,6 @@ public class Teleport implements ITeleport {
         tpType = TeleportType.NORMAL;
     }
 
-    public enum TeleportType {
-        TPA,
-        BACK,
-        NORMAL
-    }
-
     @Deprecated
     public void cooldown(boolean check) throws Exception {
         final Calendar time = new GregorianCalendar();
@@ -400,5 +394,11 @@ public class Teleport implements ITeleport {
     @Deprecated
     private void initTimer(long delay, IUser teleportUser, ITarget target, Trade chargeFor, TeleportCause cause, boolean respawn) {
         timedTeleport = new TimedTeleport(teleportOwner, ess, this, delay, teleportUser, target, chargeFor, cause, respawn);
+    }
+
+    public enum TeleportType {
+        TPA,
+        BACK,
+        NORMAL
     }
 }

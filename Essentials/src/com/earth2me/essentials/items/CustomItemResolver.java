@@ -3,12 +3,13 @@ package com.earth2me.essentials.items;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.EssentialsConf;
 import com.earth2me.essentials.IConf;
-import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
 import net.ess3.api.IItemDb;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
+
+import java.io.File;
+import java.util.Collection;
+import java.util.HashMap;
 
 public class CustomItemResolver implements IItemDb.ItemResolver, IConf {
     private final EssentialsConf config;
@@ -26,7 +27,8 @@ public class CustomItemResolver implements IItemDb.ItemResolver, IConf {
         if (map.containsKey(item)) {
             try {
                 return ess.getItemDb().get(map.get(item));
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         return null;

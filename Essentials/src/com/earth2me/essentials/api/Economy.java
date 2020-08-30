@@ -23,13 +23,12 @@ import java.util.logging.Logger;
  * You should use Vault instead of directly using this class.
  */
 public class Economy {
+    public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
+    private static final Logger logger = Logger.getLogger("Essentials");
+    private static final String noCallBeforeLoad = "Essentials API is called before Essentials is loaded.";
+    private static IEssentials ess;
     public Economy() {
     }
-
-    private static final Logger logger = Logger.getLogger("Essentials");
-    private static IEssentials ess;
-    private static final String noCallBeforeLoad = "Essentials API is called before Essentials is loaded.";
-    public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
 
     /**
      * @param aEss the ess to set
@@ -101,12 +100,10 @@ public class Economy {
     /**
      * Returns the balance of a user
      *
-     * @deprecated Use {@link Economy#getMoneyExact(UUID)} or {@link Economy#getMoneyExact(User)}
      * @param name Name of the user
-     *
      * @return balance
-     *
      * @throws UserDoesNotExistException
+     * @deprecated Use {@link Economy#getMoneyExact(UUID)} or {@link Economy#getMoneyExact(User)}
      */
     @Deprecated
     public static double getMoney(String name) throws UserDoesNotExistException {
@@ -121,10 +118,10 @@ public class Economy {
     }
 
     /**
-     * @deprecated Usernames can change, use {@link Economy#getMoneyExact(UUID)} or {@link Economy#getMoneyExact(User)}
      * @param name Name of user
      * @return Exact balance of user
      * @throws UserDoesNotExistException
+     * @deprecated Usernames can change, use {@link Economy#getMoneyExact(UUID)} or {@link Economy#getMoneyExact(User)}
      */
     @Deprecated
     public static BigDecimal getMoneyExact(String name) throws UserDoesNotExistException {
@@ -153,13 +150,11 @@ public class Economy {
     /**
      * Sets the balance of a user
      *
-     * @deprecated Use {@link Economy#setMoney(UUID, BigDecimal)} or {@link Economy#setMoney(User, BigDecimal)}
-     *
      * @param name    Name of the user
      * @param balance The balance you want to set
-     *
      * @throws UserDoesNotExistException If a user by that name does not exists
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
+     * @deprecated Use {@link Economy#setMoney(UUID, BigDecimal)} or {@link Economy#setMoney(User, BigDecimal)}
      */
     @Deprecated
     public static void setMoney(String name, double balance) throws UserDoesNotExistException, NoLoanPermittedException {
@@ -173,13 +168,11 @@ public class Economy {
     /**
      * Sets the balance of a user
      *
-     * @deprecated Usernames can change use {@link Economy#setMoney(UUID, BigDecimal)} or {@link Economy#setMoney(User, BigDecimal)}
-     *
      * @param name    Name of user
      * @param balance The balance you want to set
-     *
      * @throws UserDoesNotExistException If a user by that name does not exist
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
+     * @deprecated Usernames can change use {@link Economy#setMoney(UUID, BigDecimal)} or {@link Economy#setMoney(User, BigDecimal)}
      */
     @Deprecated
     public static void setMoney(String name, BigDecimal balance) throws UserDoesNotExistException, NoLoanPermittedException {
@@ -195,7 +188,6 @@ public class Economy {
      *
      * @param uuid    UUID of user
      * @param balance The balance you want to set
-     *
      * @throws UserDoesNotExistException If a user by that uuid does not exist
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
      */
@@ -212,7 +204,6 @@ public class Economy {
      *
      * @param user    User
      * @param balance The balance you want to set
-     *
      * @throws NoLoanPermittedException If the user is not allowed to have a negative balance
      */
     public static void setMoney(User user, BigDecimal balance) throws NoLoanPermittedException {
@@ -235,12 +226,11 @@ public class Economy {
 
     /**
      * Adds money to the balance of a user
-     *
+     * <p>
      * Use {@link Economy#add(UUID, BigDecimal)} or {@link Economy#add(User, BigDecimal)}
      *
      * @param name   Name of the user
      * @param amount The money you want to add
-     *
      * @throws UserDoesNotExistException If a user by that name does not exists
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
      */
@@ -256,14 +246,12 @@ public class Economy {
     /**
      * Adds money to the balance of a user
      *
-     * @deprecated Usernames can change, use {@link Economy#add(UUID, BigDecimal)} or {@link Economy#add(User, BigDecimal)}
-     *
      * @param name   Name of the user
      * @param amount The amount of money to be added to the user's account
-     *
      * @throws UserDoesNotExistException If a user by that name does not exist
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
      * @throws ArithmeticException
+     * @deprecated Usernames can change, use {@link Economy#add(UUID, BigDecimal)} or {@link Economy#add(User, BigDecimal)}
      */
     @Deprecated
     public static void add(String name, BigDecimal amount) throws UserDoesNotExistException, NoLoanPermittedException, ArithmeticException {
@@ -279,7 +267,6 @@ public class Economy {
      *
      * @param uuid   UUID of the user
      * @param amount The money you want to add
-     *
      * @throws UserDoesNotExistException If a user by that uuid does not exist
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
      * @throws ArithmeticException
@@ -295,13 +282,11 @@ public class Economy {
     /**
      * Adds money to the balance of a user
      *
-     * @deprecated Usernames can change, use {@link Economy#add(UUID, BigDecimal)} or {@link Economy#add(User, BigDecimal)}
-     *
      * @param user   User
      * @param amount The money you want to add
-     *
-     * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
+     * @throws NoLoanPermittedException If the user is not allowed to have a negative balance
      * @throws ArithmeticException
+     * @deprecated Usernames can change, use {@link Economy#add(UUID, BigDecimal)} or {@link Economy#add(User, BigDecimal)}
      */
     public static void add(User user, BigDecimal amount) throws NoLoanPermittedException, ArithmeticException {
         if (user == null) {
@@ -315,13 +300,11 @@ public class Economy {
     /**
      * Subtracts money from the balance of a user
      *
-     * @deprecated Use {@link Economy#subtract(UUID, BigDecimal)} or {@link Economy#subtract(User, BigDecimal)}
-     *
      * @param name   Name of the user
      * @param amount The money you want to subtract
-     *
      * @throws UserDoesNotExistException If a user by that name does not exists
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
+     * @deprecated Use {@link Economy#subtract(UUID, BigDecimal)} or {@link Economy#subtract(User, BigDecimal)}
      */
     @Deprecated
     public static void subtract(String name, double amount) throws UserDoesNotExistException, NoLoanPermittedException {
@@ -335,14 +318,12 @@ public class Economy {
     /**
      * Subtracts money from the balance of a user
      *
-     * @deprecated Usernames can change, use {@link Economy#subtract(UUID, BigDecimal)} or {@link Economy#subtract(User, BigDecimal)}
-     *
      * @param name   Name of the user
      * @param amount The money you want to subtract
-     *
      * @throws UserDoesNotExistException If a user by that name does not exist
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
      * @throws ArithmeticException
+     * @deprecated Usernames can change, use {@link Economy#subtract(UUID, BigDecimal)} or {@link Economy#subtract(User, BigDecimal)}
      */
     @Deprecated
     public static void substract(String name, BigDecimal amount) throws UserDoesNotExistException, NoLoanPermittedException, ArithmeticException {
@@ -356,7 +337,6 @@ public class Economy {
      *
      * @param uuid   UUID of the user
      * @param amount The money you want to subtract
-     *
      * @throws UserDoesNotExistException If a user by that UUID does not exist
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
      * @throws ArithmeticException
@@ -374,7 +354,6 @@ public class Economy {
      *
      * @param user   User
      * @param amount The money you want to subtract
-     *
      * @throws NoLoanPermittedException If the user is not allowed to have a negative balance
      * @throws ArithmeticException
      */
@@ -390,13 +369,11 @@ public class Economy {
     /**
      * Divides the balance of a user by a value
      *
-     * @deprecated Use {@link Economy#divide(UUID, BigDecimal)} or {@link Economy#divide(User, BigDecimal)}
-     *
-     * @param name  Name of the user
+     * @param name   Name of the user
      * @param amount The balance is divided by this value
-     *
      * @throws UserDoesNotExistException If a user by that name does not exists
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
+     * @deprecated Use {@link Economy#divide(UUID, BigDecimal)} or {@link Economy#divide(User, BigDecimal)}
      */
     @Deprecated
     public static void divide(String name, double amount) throws UserDoesNotExistException, NoLoanPermittedException {
@@ -410,14 +387,12 @@ public class Economy {
     /**
      * Divides the balance of a user by a value
      *
-     * @deprecated Usernames can change, use {@link Economy#divide(UUID, BigDecimal)} or {@link Economy#divide(User, BigDecimal)}
-     *
      * @param name   Name of the user
      * @param amount The balance is divided by this value
-     *
      * @throws UserDoesNotExistException If a user by that name does not exist
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
      * @throws ArithmeticException
+     * @deprecated Usernames can change, use {@link Economy#divide(UUID, BigDecimal)} or {@link Economy#divide(User, BigDecimal)}
      */
     @Deprecated
     public static void divide(String name, BigDecimal amount) throws UserDoesNotExistException, NoLoanPermittedException, ArithmeticException {
@@ -433,7 +408,6 @@ public class Economy {
      *
      * @param uuid   Name of the user
      * @param amount The balance is divided by this value
-     *
      * @throws UserDoesNotExistException If a user by that UUID does not exist
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
      * @throws ArithmeticException
@@ -451,8 +425,7 @@ public class Economy {
      *
      * @param user   Name of the user
      * @param amount The balance is divided by this value
-     *
-     * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
+     * @throws NoLoanPermittedException If the user is not allowed to have a negative balance
      * @throws ArithmeticException
      */
     public static void divide(User user, BigDecimal amount) throws NoLoanPermittedException, ArithmeticException {
@@ -467,13 +440,11 @@ public class Economy {
     /**
      * Multiplies the balance of a user by a value
      *
-     * @deprecated Use {@link Economy#multiply(UUID, BigDecimal)} or {@link Economy#multiply(User, BigDecimal)}
-     *
-     * @param name  Name of the user
+     * @param name   Name of the user
      * @param amount The balance is multiplied by this value
-     *
      * @throws UserDoesNotExistException If a user by that name does not exists
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
+     * @deprecated Use {@link Economy#multiply(UUID, BigDecimal)} or {@link Economy#multiply(User, BigDecimal)}
      */
     @Deprecated
     public static void multiply(String name, double amount) throws UserDoesNotExistException, NoLoanPermittedException {
@@ -487,14 +458,12 @@ public class Economy {
     /**
      * Multiplies the balance of a user by a value
      *
-     * @deprecated Usernames can change, use {@link Economy#multiply(UUID, BigDecimal)} or {@link Economy#multiply(User, BigDecimal)}
-     *
      * @param name   Name of the user
      * @param amount The balance is multiplied by the this value
-     *
      * @throws UserDoesNotExistException If a user by that name does not exist
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
      * @throws ArithmeticException
+     * @deprecated Usernames can change, use {@link Economy#multiply(UUID, BigDecimal)} or {@link Economy#multiply(User, BigDecimal)}
      */
     @Deprecated
     public static void multiply(String name, BigDecimal amount) throws UserDoesNotExistException, NoLoanPermittedException, ArithmeticException {
@@ -510,7 +479,6 @@ public class Economy {
      *
      * @param uuid   Name of the user
      * @param amount The balance is multiplied by the this value
-     *
      * @throws UserDoesNotExistException If a user by that uuid does not exist
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
      * @throws ArithmeticException
@@ -528,8 +496,7 @@ public class Economy {
      *
      * @param user   Name of the user
      * @param amount The balance is multiplied by the this value
-     *
-     * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
+     * @throws NoLoanPermittedException If the user is not allowed to have a negative balance
      * @throws ArithmeticException
      */
     public static void multiply(User user, BigDecimal amount) throws NoLoanPermittedException, ArithmeticException {
@@ -544,12 +511,10 @@ public class Economy {
     /**
      * Resets the balance of a user to the starting balance
      *
-     * @deprecated Usernames can change, use {@link Economy#resetBalance(UUID)} or {@link Economy#resetBalance(User)}
-     *
      * @param name Name of the user
-     *
      * @throws UserDoesNotExistException If a user by that name does not exists
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
+     * @deprecated Usernames can change, use {@link Economy#resetBalance(UUID)} or {@link Economy#resetBalance(User)}
      */
     @Deprecated
     public static void resetBalance(String name) throws UserDoesNotExistException, NoLoanPermittedException {
@@ -564,7 +529,6 @@ public class Economy {
      * Resets the balance of a user to the starting balance
      *
      * @param uuid UUID of the user
-     *
      * @throws UserDoesNotExistException If a user by that UUID does not exists
      * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
      */
@@ -580,8 +544,7 @@ public class Economy {
      * Resets the balance of a user to the starting balance
      *
      * @param user User
-     *
-     * @throws NoLoanPermittedException  If the user is not allowed to have a negative balance
+     * @throws NoLoanPermittedException If the user is not allowed to have a negative balance
      */
     public static void resetBalance(User user) throws NoLoanPermittedException {
         if (ess == null) {
@@ -595,14 +558,11 @@ public class Economy {
     }
 
     /**
-     * @deprecated Use {@link Economy#hasEnough(UUID, BigDecimal)} or {@link Economy#hasEnough(User, BigDecimal)}
-     *
      * @param name   Name of the user
      * @param amount The amount of money the user should have
-     *
      * @return true, if the user has more or an equal amount of money
-     *
      * @throws UserDoesNotExistException If a user by that name does not exists
+     * @deprecated Use {@link Economy#hasEnough(UUID, BigDecimal)} or {@link Economy#hasEnough(User, BigDecimal)}
      */
     @Deprecated
     public static boolean hasEnough(String name, double amount) throws UserDoesNotExistException {
@@ -615,15 +575,12 @@ public class Economy {
     }
 
     /**
-     * @deprecated Usernames can change, use {@link Economy#hasEnough(UUID, BigDecimal)} or {@link Economy#hasEnough(User, BigDecimal)}
-     *
      * @param name   Name of the user
      * @param amount The amount of money the user should have
-     *
      * @return true, if the user has more or an equal amount of money
-     *
      * @throws UserDoesNotExistException If a user by that name does not exist
      * @throws ArithmeticException
+     * @deprecated Usernames can change, use {@link Economy#hasEnough(UUID, BigDecimal)} or {@link Economy#hasEnough(User, BigDecimal)}
      */
     public static boolean hasEnough(String name, BigDecimal amount) throws UserDoesNotExistException, ArithmeticException {
         User user = getUserByName(name);
@@ -636,9 +593,7 @@ public class Economy {
     /**
      * @param uuid   UUID of the user
      * @param amount The amount of money the user should have
-     *
      * @return true, if the user has more or an equal amount of money
-     *
      * @throws UserDoesNotExistException If a user by that UUID does not exist
      * @throws ArithmeticException
      */
@@ -653,9 +608,7 @@ public class Economy {
     /**
      * @param user   User
      * @param amount The amount of money the user should have
-     *
      * @return true, if the user has more or an equal amount of money
-     *
      * @throws ArithmeticException
      */
     public static boolean hasEnough(User user, BigDecimal amount) throws ArithmeticException {
@@ -666,14 +619,11 @@ public class Economy {
     }
 
     /**
-     * @deprecated Use {@link Economy#hasMore(UUID, BigDecimal)} or {@link Economy#hasMore(User, BigDecimal)}
-     *
      * @param name   Name of the user
      * @param amount The amount of money the user should have
-     *
      * @return true, if the user has more money
-     *
      * @throws UserDoesNotExistException If a user by that name does not exists
+     * @deprecated Use {@link Economy#hasMore(UUID, BigDecimal)} or {@link Economy#hasMore(User, BigDecimal)}
      */
     @Deprecated
     public static boolean hasMore(String name, double amount) throws UserDoesNotExistException {
@@ -686,15 +636,12 @@ public class Economy {
     }
 
     /**
-     * @deprecated Usernames can change, use {@link Economy#hasMore(UUID, BigDecimal)} or {@link Economy#hasMore(User, BigDecimal)}
-     *
      * @param name   Name of the user
      * @param amount The amount of money the user should have
-     *
      * @return true, if the user has more money
-     *
      * @throws UserDoesNotExistException If a user by that name does not exists
      * @throws ArithmeticException
+     * @deprecated Usernames can change, use {@link Economy#hasMore(UUID, BigDecimal)} or {@link Economy#hasMore(User, BigDecimal)}
      */
     @Deprecated
     public static boolean hasMore(String name, BigDecimal amount) throws UserDoesNotExistException, ArithmeticException {
@@ -708,9 +655,7 @@ public class Economy {
     /**
      * @param uuid   UUID of the user
      * @param amount The amount of money the user should have
-     *
      * @return true, if the user has more money
-     *
      * @throws UserDoesNotExistException If a user by that UUID does not exists
      * @throws ArithmeticException
      */
@@ -725,9 +670,7 @@ public class Economy {
     /**
      * @param user   User
      * @param amount The amount of money the user should have
-     *
      * @return true, if the user has more money
-     *
      * @throws ArithmeticException
      */
     public static boolean hasMore(User user, BigDecimal amount) throws ArithmeticException {
@@ -738,14 +681,11 @@ public class Economy {
     }
 
     /**
-     * @deprecated Use {@link Economy#hasLess(UUID, BigDecimal)} or {@link Economy#hasLess(User, BigDecimal)}
-     *
      * @param name   Name of the user
      * @param amount The amount of money the user should not have
-     *
      * @return true, if the user has less money
-     *
      * @throws UserDoesNotExistException If a user by that name does not exists
+     * @deprecated Use {@link Economy#hasLess(UUID, BigDecimal)} or {@link Economy#hasLess(User, BigDecimal)}
      */
     @Deprecated
     public static boolean hasLess(String name, double amount) throws UserDoesNotExistException {
@@ -758,15 +698,12 @@ public class Economy {
     }
 
     /**
-     * @deprecated Usernames can change, use {@link Economy#hasLess(UUID, BigDecimal)} or {@link Economy#hasLess(User, BigDecimal)}
-     *
      * @param name   Name of the user
      * @param amount The amount of money the user should not have
-     *
      * @return true, if the user has less money
-     *
      * @throws UserDoesNotExistException If a user by that name does not exist
      * @throws ArithmeticException
+     * @deprecated Usernames can change, use {@link Economy#hasLess(UUID, BigDecimal)} or {@link Economy#hasLess(User, BigDecimal)}
      */
     @Deprecated
     public static boolean hasLess(String name, BigDecimal amount) throws UserDoesNotExistException, ArithmeticException {
@@ -780,9 +717,7 @@ public class Economy {
     /**
      * @param uuid   UUID of the user
      * @param amount The amount of money the user should not have
-     *
      * @return true, if the user has less money
-     *
      * @throws UserDoesNotExistException If a user by that UUID does not exist
      * @throws ArithmeticException
      */
@@ -797,9 +732,7 @@ public class Economy {
     /**
      * @param user   User
      * @param amount The amount of money the user should not have
-     *
      * @return true, if the user has less money
-     *
      * @throws ArithmeticException
      */
     public static boolean hasLess(User user, BigDecimal amount) throws ArithmeticException {
@@ -811,14 +744,11 @@ public class Economy {
 
     /**
      * Test if the user has a negative balance
-     * 
-     * @deprecated Usernames can change, use {@link Economy#isNegative(UUID)} or {@link Economy#isNegative(User)}
      *
      * @param name Name of the user
-     *
      * @return true, if the user has a negative balance
-     *
      * @throws UserDoesNotExistException If a user by that name does not exists
+     * @deprecated Usernames can change, use {@link Economy#isNegative(UUID)} or {@link Economy#isNegative(User)}
      */
     @Deprecated
     public static boolean isNegative(String name) throws UserDoesNotExistException {
@@ -831,11 +761,9 @@ public class Economy {
 
     /**
      * Test if the user has a negative balance
-     * 
-     * @param uuid UUID of the user
-     * 
-     * @return true, if the user has a negative balance
      *
+     * @param uuid UUID of the user
+     * @return true, if the user has a negative balance
      * @throws UserDoesNotExistException If a user by that UUID does not exists
      */
     public static boolean isNegative(UUID uuid) throws UserDoesNotExistException {
@@ -848,9 +776,8 @@ public class Economy {
 
     /**
      * Test if the user has a negative balance
-     * 
-     * @param user User
      *
+     * @param user User
      * @return true, if the user has a negative balance
      */
     public static boolean isNegative(User user) {
@@ -864,7 +791,6 @@ public class Economy {
      * Formats the amount of money like all other Essentials functions. Example: $100000 or $12345.67
      *
      * @param amount The amount of money
-     *
      * @return Formatted money
      */
     @Deprecated
@@ -887,11 +813,9 @@ public class Economy {
     /**
      * Test if a player exists to avoid the UserDoesNotExistException
      *
-     * @deprecated Essentials is moving away from username based economy methods. This may be removed in the future.
-     *
      * @param name Name of the user
-     *
      * @return true, if the user exists
+     * @deprecated Essentials is moving away from username based economy methods. This may be removed in the future.
      */
     @Deprecated
     public static boolean playerExists(String name) {
@@ -902,7 +826,6 @@ public class Economy {
      * Test if a player exists to avoid the UserDoesNotExistException
      *
      * @param uuid UUID of the user
-     *
      * @return true, if the user exists
      */
     public static boolean playerExists(UUID uuid) {
@@ -913,9 +836,7 @@ public class Economy {
      * Test if a player is a npc
      *
      * @param name Name of the player
-     *
      * @return true, if it's a npc
-     *
      * @throws UserDoesNotExistException
      */
     public static boolean isNPC(String name) throws UserDoesNotExistException {
@@ -930,7 +851,6 @@ public class Economy {
      * Creates dummy files for a npc, if there is no player yet with that name.
      *
      * @param name Name of the player
-     *
      * @return true, if a new npc was created
      */
     public static boolean createNPC(String name) {
@@ -946,7 +866,6 @@ public class Economy {
      * Deletes a user, if it is marked as npc.
      *
      * @param name Name of the player
-     *
      * @throws UserDoesNotExistException
      */
     public static void removeNPC(String name) throws UserDoesNotExistException {

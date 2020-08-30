@@ -23,11 +23,11 @@ public class XMPPManager extends Handler implements MessageListener, ChatManager
     private static final Logger logger = Logger.getLogger("EssentialsXMPP");
     private static final SimpleFormatter formatter = new SimpleFormatter();
     private final transient EssentialsConf config;
-    private transient XMPPConnection connection;
-    private transient ChatManager chatManager;
     private final transient Map<String, Chat> chats = Collections.synchronizedMap(new HashMap<>());
     private final transient Set<LogRecord> logrecords = Collections.synchronizedSet(new HashSet<>());
     private final transient IEssentialsXMPP parent;
+    private transient XMPPConnection connection;
+    private transient ChatManager chatManager;
     private transient List<String> logUsers;
     private transient Level logLevel;
     private transient boolean ignoreLagMessages = true;

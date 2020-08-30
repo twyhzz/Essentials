@@ -38,6 +38,45 @@ public class SpawnEggRefl {
     }
 
     /**
+     * Converts from an item stack to a spawn egg
+     *
+     * @param item - ItemStack, quantity is disregarded
+     * @return SpawnEgg
+     */
+    public static SpawnEggRefl fromItemStack(ItemStack item) throws Exception {
+        if (item == null)
+            throw new IllegalArgumentException("Item cannot be null");
+        if (item.getType() != Material.MONSTER_EGG)
+            throw new IllegalArgumentException("Item is not a monster egg");
+
+        Class<?> NMSItemStackClass = ReflUtil.getNMSClass("ItemStack");
+        Class<?> craftItemStackClass = ReflUtil.getOBCClass("inventory.CraftItemStack");
+        Method asNMSCopyMethod = ReflUtil.getMethodCached(craftItemStackClass, "asNMSCopy", ItemStack.class);
+
+        Object stack = asNMSCopyMethod.invoke(null, item);
+        Object tagCompound = ReflUtil.getMethodCached(NMSItemStackClass, "getTag").invoke(stack);
+        if (tagCompound != null) {
+            Method tagGetCompound = ReflUtil.getMethodCached(tagCompound.getClass(), "getCompound", String.class);
+            Object entityTag = tagGetCompound.invoke(tagCompound, "EntityTag");
+
+            Method tagGetString = ReflUtil.getMethodCached(entityTag.getClass(), "getString", String.class);
+            String idString = (String) tagGetString.invoke(entityTag, "id");
+            if (ReflUtil.getNmsVersionObject().isHigherThanOrEqualTo(ReflUtil.V1_11_R1)) {
+                idString = idString.split("minecraft:")[1];
+            }
+            @SuppressWarnings("deprecation")
+            EntityType type = EntityType.fromName(idString);
+            if (type != null) {
+                return new SpawnEggRefl(type);
+            } else {
+                throw new IllegalArgumentException("Unable to parse type from item");
+            }
+        } else {
+            throw new IllegalArgumentException("Item is lacking tag compound");
+        }
+    }
+
+    /**
      * Get the type of entity this egg will spawn.
      *
      * @return The entity type.
@@ -111,44 +150,5 @@ public class SpawnEggRefl {
 
         Method asBukkitCopyMethod = ReflUtil.getMethodCached(craftItemStackClass, "asBukkitCopy", NMSItemStackClass);
         return (ItemStack) asBukkitCopyMethod.invoke(null, stack);
-    }
-
-    /**
-     * Converts from an item stack to a spawn egg
-     *
-     * @param item - ItemStack, quantity is disregarded
-     * @return SpawnEgg
-     */
-    public static SpawnEggRefl fromItemStack(ItemStack item) throws Exception {
-        if (item == null)
-            throw new IllegalArgumentException("Item cannot be null");
-        if (item.getType() != Material.MONSTER_EGG)
-            throw new IllegalArgumentException("Item is not a monster egg");
-
-        Class<?> NMSItemStackClass = ReflUtil.getNMSClass("ItemStack");
-        Class<?> craftItemStackClass = ReflUtil.getOBCClass("inventory.CraftItemStack");
-        Method asNMSCopyMethod = ReflUtil.getMethodCached(craftItemStackClass, "asNMSCopy", ItemStack.class);
-
-        Object stack = asNMSCopyMethod.invoke(null, item);
-        Object tagCompound = ReflUtil.getMethodCached(NMSItemStackClass, "getTag").invoke(stack);
-        if (tagCompound != null) {
-            Method tagGetCompound = ReflUtil.getMethodCached(tagCompound.getClass(), "getCompound", String.class);
-            Object entityTag = tagGetCompound.invoke(tagCompound, "EntityTag");
-
-            Method tagGetString = ReflUtil.getMethodCached(entityTag.getClass(), "getString", String.class);
-            String idString = (String) tagGetString.invoke(entityTag, "id");
-            if (ReflUtil.getNmsVersionObject().isHigherThanOrEqualTo(ReflUtil.V1_11_R1)) {
-                idString = idString.split("minecraft:")[1];
-            }
-            @SuppressWarnings("deprecation")
-            EntityType type = EntityType.fromName(idString);
-            if (type != null) {
-                return new SpawnEggRefl(type);
-            } else {
-                throw new IllegalArgumentException("Unable to parse type from item");
-            }
-        } else {
-            throw new IllegalArgumentException("Item is lacking tag compound");
-        }
     }
 }

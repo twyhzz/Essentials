@@ -14,9 +14,9 @@ import java.util.logging.Logger;
 
 public abstract class EssentialsChatPlayer implements Listener {
     static final Logger logger = Logger.getLogger("EssentialsChat");
-    transient IEssentials ess;
     final transient Server server;
     private final transient Map<AsyncPlayerChatEvent, ChatStore> chatStorage;
+    transient IEssentials ess;
 
     EssentialsChatPlayer(final Server server, final IEssentials ess, final Map<AsyncPlayerChatEvent, ChatStore> chatStorage) {
         this.ess = ess;

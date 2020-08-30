@@ -15,15 +15,7 @@ import java.util.regex.Pattern;
 
 
 public class I18n implements net.ess3.api.II18n {
-    private static I18n instance;
     private static final String MESSAGES = "messages";
-    private final transient Locale defaultLocale = Locale.getDefault();
-    private transient Locale currentLocale = defaultLocale;
-    private transient ResourceBundle customBundle;
-    private transient ResourceBundle localeBundle;
-    private final transient ResourceBundle defaultBundle;
-    private transient Map<String, MessageFormat> messageFormatCache = new HashMap<>();
-    private final transient IEssentials ess;
     private static final Pattern NODOUBLEMARK = Pattern.compile("''");
     private static final ResourceBundle NULL_BUNDLE = new ResourceBundle() {
         public Enumeration<String> getKeys() {
@@ -34,12 +26,35 @@ public class I18n implements net.ess3.api.II18n {
             return null;
         }
     };
+    private static I18n instance;
+    private final transient Locale defaultLocale = Locale.getDefault();
+    private final transient ResourceBundle defaultBundle;
+    private final transient IEssentials ess;
+    private transient Locale currentLocale = defaultLocale;
+    private transient ResourceBundle customBundle;
+    private transient ResourceBundle localeBundle;
+    private transient Map<String, MessageFormat> messageFormatCache = new HashMap<>();
 
     public I18n(final IEssentials ess) {
         this.ess = ess;
         defaultBundle = ResourceBundle.getBundle(MESSAGES, Locale.ENGLISH, new UTF8PropertiesControl());
         localeBundle = defaultBundle;
         customBundle = NULL_BUNDLE;
+    }
+
+    public static String tl(final String string, final Object... objects) {
+        if (instance == null) {
+            return "";
+        }
+        if (objects.length == 0) {
+            return NODOUBLEMARK.matcher(instance.translate(string)).replaceAll("'");
+        } else {
+            return instance.format(string, objects);
+        }
+    }
+
+    public static String capitalCase(final String input) {
+        return input == null || input.length() == 0 ? input : input.toUpperCase(Locale.ENGLISH).charAt(0) + input.toLowerCase(Locale.ENGLISH).substring(1);
     }
 
     public void onEnable() {
@@ -65,17 +80,6 @@ public class I18n implements net.ess3.api.II18n {
         } catch (MissingResourceException ex) {
             Logger.getLogger("Essentials").log(Level.WARNING, String.format("Missing translation key \"%s\" in translation file %s", ex.getKey(), localeBundle.getLocale().toString()), ex);
             return defaultBundle.getString(string);
-        }
-    }
-
-    public static String tl(final String string, final Object... objects) {
-        if (instance == null) {
-            return "";
-        }
-        if (objects.length == 0) {
-            return NODOUBLEMARK.matcher(instance.translate(string)).replaceAll("'");
-        } else {
-            return instance.format(string, objects);
         }
     }
 
@@ -125,10 +129,6 @@ public class I18n implements net.ess3.api.II18n {
         }
     }
 
-    public static String capitalCase(final String input) {
-        return input == null || input.length() == 0 ? input : input.toUpperCase(Locale.ENGLISH).charAt(0) + input.toLowerCase(Locale.ENGLISH).substring(1);
-    }
-
     /**
      * Attempts to load properties files from the plugin directory before falling back to the jar.
      */
@@ -146,7 +146,8 @@ public class I18n implements net.ess3.api.II18n {
             if (file.exists()) {
                 try {
                     return file.toURI().toURL();
-                } catch (MalformedURLException ignored) {}
+                } catch (MalformedURLException ignored) {
+                }
             }
             return null;
         }
@@ -157,7 +158,8 @@ public class I18n implements net.ess3.api.II18n {
             if (file.exists()) {
                 try {
                     return new FileInputStream(file);
-                } catch (FileNotFoundException ignored) {}
+                } catch (FileNotFoundException ignored) {
+                }
             }
             return null;
         }

@@ -27,12 +27,65 @@ import static com.earth2me.essentials.I18n.tl;
 
 
 public class EssentialsSign {
-    private static final Set<Material> EMPTY_SET = new HashSet<>();
     protected static final BigDecimal MINTRANSACTION = new BigDecimal("0.01");
+    private static final Set<Material> EMPTY_SET = new HashSet<>();
     protected transient final String signName;
 
     public EssentialsSign(final String signName) {
         this.signName = signName;
+    }
+
+    protected static boolean checkIfBlockBreaksSigns(final Block block) {
+        final Block sign = block.getRelative(BlockFace.UP);
+        if (MaterialUtil.isSignPost(sign.getType()) && isValidSign(new BlockSign(sign))) {
+            return true;
+        }
+        final BlockFace[] directions = new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+        for (BlockFace blockFace : directions) {
+            final Block signBlock = block.getRelative(blockFace);
+            if (MaterialUtil.isWallSign(signBlock.getType())) {
+                try {
+                    if (getWallSignFacing(signBlock) == blockFace && isValidSign(new BlockSign(signBlock))) {
+                        return true;
+                    }
+                } catch (NullPointerException ex) {
+                    // Sometimes signs enter a state of being semi broken, having no text or state data, usually while burning.
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @deprecated, use {@link #isValidSign(IEssentials, ISign)} if possible
+     */
+    @Deprecated
+    public static boolean isValidSign(final ISign sign) {
+        return sign.getLine(0).matches("§1\\[.*\\]");
+    }
+
+    public static boolean isValidSign(final IEssentials ess, final ISign sign) {
+        if (!sign.getLine(0).matches("§1\\[.*\\]"))
+            return false;
+
+        // Validate that the sign is actually an essentials sign
+        String signName = ChatColor.stripColor(sign.getLine(0)).replaceAll("[^a-zA-Z]", "");
+        for (EssentialsSign essSign : ess.getSettings().enabledSigns()) {
+            if (essSign.getName().equalsIgnoreCase(signName))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static BlockFace getWallSignFacing(Block block) {
+        try {
+            final WallSign signData = (WallSign) block.getState().getBlockData();
+            return signData.getFacing();
+        } catch (NoClassDefFoundError | NoSuchMethodError e) {
+            final org.bukkit.material.Sign signMat = (org.bukkit.material.Sign) block.getState().getData();
+            return signMat.getFacing();
+        }
     }
 
     protected final boolean onSignCreate(final SignChangeEvent event, final IEssentials ess) {
@@ -202,47 +255,6 @@ public class EssentialsSign {
 
     protected boolean onBlockPush(final Block block, final IEssentials ess) {
         return true;
-    }
-
-    protected static boolean checkIfBlockBreaksSigns(final Block block) {
-        final Block sign = block.getRelative(BlockFace.UP);
-        if (MaterialUtil.isSignPost(sign.getType()) && isValidSign(new BlockSign(sign))) {
-            return true;
-        }
-        final BlockFace[] directions = new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
-        for (BlockFace blockFace : directions) {
-            final Block signBlock = block.getRelative(blockFace);
-            if (MaterialUtil.isWallSign(signBlock.getType())) {
-                try {
-                    if (getWallSignFacing(signBlock) == blockFace && isValidSign(new BlockSign(signBlock))) {
-                        return true;
-                    }
-                } catch (NullPointerException ex) {
-                    // Sometimes signs enter a state of being semi broken, having no text or state data, usually while burning.
-                }
-            }
-        }
-        return false;
-    }
-
-    /** @deprecated, use {@link #isValidSign(IEssentials, ISign)} if possible */
-    @Deprecated
-    public static boolean isValidSign(final ISign sign) {
-        return sign.getLine(0).matches("§1\\[.*\\]");
-    }
-
-    public static boolean isValidSign(final IEssentials ess, final ISign sign) {
-        if (!sign.getLine(0).matches("§1\\[.*\\]"))
-            return false;
-
-        // Validate that the sign is actually an essentials sign
-        String signName = ChatColor.stripColor(sign.getLine(0)).replaceAll("[^a-zA-Z]", "");
-        for (EssentialsSign essSign : ess.getSettings().enabledSigns()) {
-            if (essSign.getName().equalsIgnoreCase(signName))
-                return true;
-        }
-
-        return false;
     }
 
     protected boolean onBlockPlace(final Block block, final User player, final String username, final IEssentials ess) throws SignException, ChargeException {
@@ -440,16 +452,16 @@ public class EssentialsSign {
         ess.showError(sender, exception, "\\ sign: " + signName);
     }
 
-    private static BlockFace getWallSignFacing(Block block) {
-        try {
-            final WallSign signData = (WallSign) block.getState().getBlockData();
-            return signData.getFacing();
-        } catch (NoClassDefFoundError | NoSuchMethodError e) {
-            final org.bukkit.material.Sign signMat = (org.bukkit.material.Sign) block.getState().getData();
-            return signMat.getFacing();
-        }
-    }
 
+    public interface ISign {
+        String getLine(final int index);
+
+        void setLine(final int index, final String text);
+
+        Block getBlock();
+
+        void updateSign();
+    }
 
     static class EventSign implements ISign {
         private final transient SignChangeEvent event;
@@ -492,7 +504,6 @@ public class EssentialsSign {
         }
     }
 
-
     static class BlockSign implements ISign {
         private final transient Sign sign;
         private final transient Block block;
@@ -528,16 +539,5 @@ public class EssentialsSign {
         public final void updateSign() {
             sign.update();
         }
-    }
-
-
-    public interface ISign {
-        String getLine(final int index);
-
-        void setLine(final int index, final String text);
-
-        Block getBlock();
-
-        void updateSign();
     }
 }

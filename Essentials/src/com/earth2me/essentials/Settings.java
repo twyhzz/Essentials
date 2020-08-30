@@ -24,17 +24,8 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,9 +36,91 @@ import static com.earth2me.essentials.I18n.tl;
 
 
 public class Settings implements net.ess3.api.ISettings {
-    private final transient EssentialsConf config;
     private static final Logger logger = Logger.getLogger("Essentials");
+    private static final BigDecimal MAXMONEY = new BigDecimal("10000000000000");
+    private static final BigDecimal MINMONEY = new BigDecimal("-10000000000000");
+    private final transient EssentialsConf config;
     private final transient IEssentials ess;
+    private final Map<String, String> chatFormats = Collections.synchronizedMap(new HashMap<>());
+    private int chatRadius = 0;
+    // #easteregg
+    private char chatShout = '!';
+    // #easteregg
+    private char chatQuestion = '?';
+    private boolean teleportSafety;
+    private boolean forceDisableTeleportSafety;
+    private Set<String> disabledCommands = new HashSet<>();
+    private ConfigurationSection commandCosts;
+    private Set<String> socialSpyCommands = new HashSet<>();
+    private Set<String> muteCommands = new HashSet<>();
+    private String nicknamePrefix = "~";
+    private String operatorColor = null;
+    private List<Material> itemSpawnBl = new ArrayList<>();
+    private List<EssentialsSign> enabledSigns = new ArrayList<>();
+    private boolean signsEnabled = false;
+    private boolean warnOnBuildDisallow;
+    private boolean debug = false;
+    private boolean configDebug = false;
+    // #easteregg
+    private boolean economyDisabled = false;
+    private BigDecimal maxMoney = MAXMONEY;
+    private BigDecimal minMoney = MINMONEY;
+    private boolean economyLog = false;
+    // #easteregg
+    private boolean economyLogUpdate = false;
+    private boolean changeDisplayName = true;
+    private boolean changePlayerListName = false;
+    private boolean prefixsuffixconfigured = false;
+    private boolean addprefixsuffix = false;
+    private boolean essentialsChatActive = false;
+    // #easteregg
+    private boolean disablePrefix = false;
+    // #easteregg
+    private boolean disableSuffix = false;
+    private boolean getFreezeAfkPlayers;
+    private boolean cancelAfkOnMove;
+    private boolean cancelAfkOnInteract;
+    private boolean sleepIgnoresAfkPlayers;
+    private String afkListName;
+    private boolean isAfkListName;
+    private boolean broadcastAfkMessage;
+    private KeepInvPolicy vanishingItemPolicy;
+    private KeepInvPolicy bindingItemPolicy;
+    private Set<String> noGodWorlds = new HashSet<>();
+    private boolean registerBackInListener;
+    private boolean disableItemPickupWhileAfk;
+    private long teleportInvulnerabilityTime;
+    private boolean teleportInvulnerability;
+    private long loginAttackDelay;
+    private int signUsePerSecond;
+    private int mailsPerMinute;
+    // #easteregg
+    private long economyLagWarning;
+    // #easteregg
+    private long permissionsLagWarning;
+    private boolean allowSilentJoin;
+    private String customJoinMessage;
+    private boolean isCustomJoinMessage;
+    private String customQuitMessage;
+    private boolean isCustomQuitMessage;
+    private List<String> spawnOnJoinGroups;
+    private Map<Pattern, Long> commandCooldowns;
+    private boolean npcsInBalanceRanking = false;
+    private NumberFormat currencyFormat;
+    private List<EssentialsSign> unprotectedSigns = Collections.emptyList();
+    private List<String> defaultEnabledConfirmCommands;
+    private boolean teleportBackWhenFreedFromJail;
+    private boolean isCompassTowardsHomePerm;
+    private boolean isAllowWorldInBroadcastworld;
+    private String itemDbType; // #EasterEgg - admins can manually switch items provider if they want
+    private boolean forceEnableRecipe; // https://github.com/EssentialsX/Essentials/issues/1397
+    private boolean allowOldIdSigns;
+    private boolean isWaterSafe;
+    private boolean isSafeUsermap;
+    private boolean logCommandBlockCommands;
+    private Set<Predicate<String>> nickBlacklist;
+    private double maxProjectileSpeed;
+    private boolean removeEffectsOnHeal;
 
     public Settings(IEssentials ess) {
         this.ess = ess;
@@ -100,8 +173,6 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getInt("sethome-multiple." + set, config.getInt("sethome-multiple.default", 3));
     }
 
-    private int chatRadius = 0;
-
     private int _getChatRadius() {
         return config.getInt("chat.radius", config.getInt("chat-radius", 0));
     }
@@ -116,9 +187,6 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getInt("near-radius", 200);
     }
 
-    // #easteregg
-    private char chatShout = '!';
-
     private char _getChatShout() {
         return config.getString("chat.shout", "!").charAt(0);
     }
@@ -127,9 +195,6 @@ public class Settings implements net.ess3.api.ISettings {
     public char getChatShout() {
         return chatShout;
     }
-
-    // #easteregg
-    private char chatQuestion = '?';
 
     private char _getChatQuestion() {
         return config.getString("chat.question", "?").charAt(0);
@@ -140,8 +205,6 @@ public class Settings implements net.ess3.api.ISettings {
         return chatQuestion;
     }
 
-    private boolean teleportSafety;
-
     public boolean _isTeleportSafetyEnabled() {
         return config.getBoolean("teleport-safety", true);
     }
@@ -150,8 +213,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean isTeleportSafetyEnabled() {
         return teleportSafety;
     }
-
-    private boolean forceDisableTeleportSafety;
 
     private boolean _isForceDisableTeleportSafety() {
         return config.getBoolean("force-disable-teleport-safety", false);
@@ -202,8 +263,6 @@ public class Settings implements net.ess3.api.ISettings {
         return isCommandDisabled(cmd.getName());
     }
 
-    private Set<String> disabledCommands = new HashSet<>();
-
     @Override
     public boolean isCommandDisabled(String label) {
         return disabledCommands.contains(label);
@@ -243,8 +302,6 @@ public class Settings implements net.ess3.api.ISettings {
         }
         return config.getBoolean("override-" + name.toLowerCase(Locale.ENGLISH), false);
     }
-
-    private ConfigurationSection commandCosts;
 
     @Override
     public BigDecimal getCommandCost(IEssentialsCommand cmd) {
@@ -290,8 +347,6 @@ public class Settings implements net.ess3.api.ISettings {
         return BigDecimal.ZERO;
     }
 
-    private Set<String> socialSpyCommands = new HashSet<>();
-
     private Set<String> _getSocialSpyCommands() {
         Set<String> socialspyCommands = new HashSet<>();
 
@@ -316,8 +371,6 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getBoolean("socialspy-listen-muted-players", true);
     }
 
-    private Set<String> muteCommands = new HashSet<>();
-
     private Set<String> _getMuteCommands() {
         Set<String> muteCommands = new HashSet<>();
         if (config.isList("mute-commands")) {
@@ -333,8 +386,6 @@ public class Settings implements net.ess3.api.ISettings {
     public Set<String> getMuteCommands() {
         return muteCommands;
     }
-
-    private String nicknamePrefix = "~";
 
     private String _getNicknamePrefix() {
         return config.getString("nickname-prefix", "~");
@@ -379,8 +430,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean isSkippingUsedOneTimeKitsFromKitList() {
         return config.getBoolean("skip-used-one-time-kits-from-kit-list", false);
     }
-
-    private String operatorColor = null;
 
     @Override
     public String getOperatorColor() {
@@ -452,8 +501,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean isAlwaysRunBackup() {
         return config.getBoolean("backup.always-run", false);
     }
-
-    private final Map<String, String> chatFormats = Collections.synchronizedMap(new HashMap<>());
 
     @Override
     public String getChatFormat(String group) {
@@ -601,8 +648,6 @@ public class Settings implements net.ess3.api.ISettings {
         itemSpawnBl = _getItemSpawnBlacklist();
     }
 
-    private List<Material> itemSpawnBl = new ArrayList<>();
-
     @Override
     public List<Material> itemSpawnBlacklist() {
         return itemSpawnBl;
@@ -629,9 +674,6 @@ public class Settings implements net.ess3.api.ISettings {
         }
         return epItemSpwn;
     }
-
-    private List<EssentialsSign> enabledSigns = new ArrayList<>();
-    private boolean signsEnabled = false;
 
     @Override
     public List<EssentialsSign> enabledSigns() {
@@ -663,8 +705,6 @@ public class Settings implements net.ess3.api.ISettings {
         return newSigns;
     }
 
-    private boolean warnOnBuildDisallow;
-
     private boolean _warnOnBuildDisallow() {
         return config.getBoolean("protect.disable.warn-on-build-disallow", false);
     }
@@ -674,9 +714,6 @@ public class Settings implements net.ess3.api.ISettings {
         return warnOnBuildDisallow;
     }
 
-    private boolean debug = false;
-    private boolean configDebug = false;
-
     private boolean _isDebug() {
         return config.getBoolean("debug", false);
     }
@@ -684,6 +721,11 @@ public class Settings implements net.ess3.api.ISettings {
     @Override
     public boolean isDebug() {
         return debug || configDebug;
+    }
+
+    @Override
+    public void setDebug(final boolean debug) {
+        this.debug = debug;
     }
 
     @Override
@@ -726,9 +768,6 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getBoolean("trade-in-stacks." + type.toString().toLowerCase().replace("_", ""), false);
     }
 
-    // #easteregg
-    private boolean economyDisabled = false;
-
     public boolean _isEcoDisabled() {
         return config.getBoolean("disable-eco", false);
     }
@@ -753,12 +792,13 @@ public class Settings implements net.ess3.api.ISettings {
             }
 
             Material mat = EnumUtil.getMaterial(itemName.toUpperCase());
-            
+
             if (mat == null) {
                 try {
                     ItemStack itemStack = ess.getItemDb().get(itemName);
                     mat = itemStack.getType();
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
 
             if (mat == null) {
@@ -780,9 +820,6 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getBoolean(configName, def);
     }
 
-    private static final BigDecimal MAXMONEY = new BigDecimal("10000000000000");
-    private BigDecimal maxMoney = MAXMONEY;
-
     private BigDecimal _getMaxMoney() {
         return config.getBigDecimal("max-money", MAXMONEY);
     }
@@ -791,9 +828,6 @@ public class Settings implements net.ess3.api.ISettings {
     public BigDecimal getMaxMoney() {
         return maxMoney;
     }
-
-    private static final BigDecimal MINMONEY = new BigDecimal("-10000000000000");
-    private BigDecimal minMoney = MINMONEY;
 
     private BigDecimal _getMinMoney() {
         BigDecimal min = config.getBigDecimal("min-money", MINMONEY);
@@ -808,8 +842,6 @@ public class Settings implements net.ess3.api.ISettings {
         return minMoney;
     }
 
-    private boolean economyLog = false;
-
     @Override
     public boolean isEcoLogEnabled() {
         return economyLog;
@@ -818,9 +850,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean _isEcoLogEnabled() {
         return config.getBoolean("economy-log-enabled", false);
     }
-
-    // #easteregg
-    private boolean economyLogUpdate = false;
 
     @Override
     public boolean isEcoLogUpdateEnabled() {
@@ -841,8 +870,6 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getBoolean("remove-god-on-disconnect", false);
     }
 
-    private boolean changeDisplayName = true;
-
     private boolean _changeDisplayName() {
         return config.getBoolean("change-displayname", true);
     }
@@ -851,8 +878,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean changeDisplayName() {
         return changeDisplayName;
     }
-
-    private boolean changePlayerListName = false;
 
     private boolean _changePlayerListName() {
         return config.getBoolean("change-playerlist", false);
@@ -867,10 +892,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean useBukkitPermissions() {
         return config.getBoolean("use-bukkit-permissions", false);
     }
-
-    private boolean prefixsuffixconfigured = false;
-    private boolean addprefixsuffix = false;
-    private boolean essentialsChatActive = false;
 
     private boolean _addPrefixSuffix() {
         return config.getBoolean("add-prefix-suffix", false);
@@ -890,9 +911,6 @@ public class Settings implements net.ess3.api.ISettings {
         return prefixsuffixconfigured ? addprefixsuffix : essentialsChatActive;
     }
 
-    // #easteregg
-    private boolean disablePrefix = false;
-
     private boolean _disablePrefix() {
         return config.getBoolean("disablePrefix", false);
     }
@@ -901,9 +919,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean disablePrefix() {
         return disablePrefix;
     }
-
-    // #easteregg
-    private boolean disableSuffix = false;
 
     private boolean _disableSuffix() {
         return config.getBoolean("disableSuffix", false);
@@ -924,8 +939,6 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getLong("auto-afk-kick", -1);
     }
 
-    private boolean getFreezeAfkPlayers;
-
     @Override
     public boolean getFreezeAfkPlayers() {
         return getFreezeAfkPlayers;
@@ -934,8 +947,6 @@ public class Settings implements net.ess3.api.ISettings {
     private boolean _getFreezeAfkPlayers() {
         return config.getBoolean("freeze-afk-players", false);
     }
-
-    private boolean cancelAfkOnMove;
 
     @Override
     public boolean cancelAfkOnMove() {
@@ -946,8 +957,6 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getBoolean("cancel-afk-on-move", true);
     }
 
-    private boolean cancelAfkOnInteract;
-
     @Override
     public boolean cancelAfkOnInteract() {
         return cancelAfkOnInteract;
@@ -957,8 +966,6 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getBoolean("cancel-afk-on-interact", true);
     }
 
-    private boolean sleepIgnoresAfkPlayers;
-
     @Override
     public boolean sleepIgnoresAfkPlayers() {
         return sleepIgnoresAfkPlayers;
@@ -967,9 +974,6 @@ public class Settings implements net.ess3.api.ISettings {
     private boolean _sleepIgnoresAfkPlayers() {
         return config.getBoolean("sleep-ignores-afk-players", true);
     }
-
-    private String afkListName;
-    private boolean isAfkListName;
 
     public String _getAfkListName() {
         return FormatUtil.replaceFormat(config.getString("afk-list-name", "none"));
@@ -985,8 +989,6 @@ public class Settings implements net.ess3.api.ISettings {
         return afkListName;
     }
 
-    private boolean broadcastAfkMessage;
-
     @Override
     public boolean broadcastAfkMessage() {
         return broadcastAfkMessage;
@@ -1000,8 +1002,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean areDeathMessagesEnabled() {
         return config.getBoolean("death-messages", true);
     }
-
-    private KeepInvPolicy vanishingItemPolicy;
 
     public KeepInvPolicy _getVanishingItemsPolicy() {
         String value = config.getString("vanishing-items-policy", "keep").toLowerCase(Locale.ENGLISH);
@@ -1017,8 +1017,6 @@ public class Settings implements net.ess3.api.ISettings {
         return vanishingItemPolicy;
     }
 
-    private KeepInvPolicy bindingItemPolicy;
-
     public KeepInvPolicy _getBindingItemsPolicy() {
         String value = config.getString("binding-items-policy", "keep").toLowerCase(Locale.ENGLISH);
         try {
@@ -1033,16 +1031,9 @@ public class Settings implements net.ess3.api.ISettings {
         return bindingItemPolicy;
     }
 
-    private Set<String> noGodWorlds = new HashSet<>();
-
     @Override
     public Set<String> getNoGodWorlds() {
         return noGodWorlds;
-    }
-
-    @Override
-    public void setDebug(final boolean debug) {
-        this.debug = debug;
     }
 
     @Override
@@ -1065,8 +1056,6 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getBoolean("world-home-permissions", false);
     }
 
-    private boolean registerBackInListener;
-
     @Override
     public boolean registerBackInListener() {
         return registerBackInListener;
@@ -1075,8 +1064,6 @@ public class Settings implements net.ess3.api.ISettings {
     private boolean _registerBackInListener() {
         return config.getBoolean("register-back-in-listener", false);
     }
-
-    private boolean disableItemPickupWhileAfk;
 
     @Override
     public boolean getDisableItemPickupWhileAfk() {
@@ -1126,8 +1113,6 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getLong("tpa-accept-cancellation", 120);
     }
 
-    private long teleportInvulnerabilityTime;
-
     private long _getTeleportInvulnerability() {
         return config.getLong("teleport-invulnerability", 0) * 1000;
     }
@@ -1136,8 +1121,6 @@ public class Settings implements net.ess3.api.ISettings {
     public long getTeleportInvulnerability() {
         return teleportInvulnerabilityTime;
     }
-
-    private boolean teleportInvulnerability;
 
     private boolean _isTeleportInvulnerability() {
         return (config.getLong("teleport-invulnerability", 0) > 0);
@@ -1148,8 +1131,6 @@ public class Settings implements net.ess3.api.ISettings {
         return teleportInvulnerability;
     }
 
-    private long loginAttackDelay;
-
     private long _getLoginAttackDelay() {
         return config.getLong("login-attack-delay", 0) * 1000;
     }
@@ -1158,8 +1139,6 @@ public class Settings implements net.ess3.api.ISettings {
     public long getLoginAttackDelay() {
         return loginAttackDelay;
     }
-
-    private int signUsePerSecond;
 
     private int _getSignUsePerSecond() {
         final int perSec = config.getInt("sign-use-per-second", 4);
@@ -1183,8 +1162,6 @@ public class Settings implements net.ess3.api.ISettings {
         return maxSpeed > 1.0 ? 1.0 : Math.abs(maxSpeed);
     }
 
-    private int mailsPerMinute;
-
     private int _getMailsPerMinute() {
         return config.getInt("mails-per-minute", 1000);
     }
@@ -1193,9 +1170,6 @@ public class Settings implements net.ess3.api.ISettings {
     public int getMailsPerMinute() {
         return mailsPerMinute;
     }
-
-    // #easteregg
-    private long economyLagWarning;
 
     private long _getEconomyLagWarning() {
         // Default to 25ms
@@ -1206,9 +1180,6 @@ public class Settings implements net.ess3.api.ISettings {
     public long getEconomyLagWarning() {
         return economyLagWarning;
     }
-
-    // #easteregg
-    private long permissionsLagWarning;
 
     private long _getPermissionsLagWarning() {
         // Default to 25ms
@@ -1245,8 +1216,6 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getBoolean("hide-displayname-in-vanish", false);
     }
 
-    private boolean allowSilentJoin;
-
     public boolean _allowSilentJoinQuit() {
         return config.getBoolean("allow-silent-join-quit", false);
     }
@@ -1255,9 +1224,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean allowSilentJoinQuit() {
         return allowSilentJoin;
     }
-
-    private String customJoinMessage;
-    private boolean isCustomJoinMessage;
 
     public String _getCustomJoinMessage() {
         return FormatUtil.replaceFormat(config.getString("custom-join-message", "none"));
@@ -1272,9 +1238,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean isCustomJoinMessage() {
         return isCustomJoinMessage;
     }
-
-    private String customQuitMessage;
-    private boolean isCustomQuitMessage;
 
     public String _getCustomQuitMessage() {
         return FormatUtil.replaceFormat(config.getString("custom-quit-message", "none"));
@@ -1317,11 +1280,13 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getInt("max-user-cache-count", (int) count);
     }
 
-    @Override public boolean isLastMessageReplyRecipient() {
+    @Override
+    public boolean isLastMessageReplyRecipient() {
         return config.getBoolean("last-message-reply-recipient", false);
     }
 
-    @Override public BigDecimal getMinimumPayAmount() {
+    @Override
+    public BigDecimal getMinimumPayAmount() {
         return new BigDecimal(config.getString("minimum-pay-amount", "0.001"));
     }
 
@@ -1330,15 +1295,18 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getBoolean("pay-excludes-ignore-list", false);
     }
 
-    @Override public long getLastMessageReplyRecipientTimeout() {
+    @Override
+    public long getLastMessageReplyRecipientTimeout() {
         return config.getLong("last-message-reply-recipient-timeout", 180);
     }
 
-    @Override public boolean isMilkBucketEasterEggEnabled() {
+    @Override
+    public boolean isMilkBucketEasterEggEnabled() {
         return config.getBoolean("milk-bucket-easter-egg", true);
     }
 
-    @Override public boolean isSendFlyEnableOnJoin() {
+    @Override
+    public boolean isSendFlyEnableOnJoin() {
         return config.getBoolean("send-fly-enable-on-join", true);
     }
 
@@ -1351,8 +1319,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean isSpawnOnJoin() {
         return !this.spawnOnJoinGroups.isEmpty();
     }
-
-    private List<String> spawnOnJoinGroups;
 
     public List<String> _getSpawnOnJoinGroups() {
         List<String> def = Collections.emptyList();
@@ -1390,8 +1356,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean isTeleportToCenterLocation() {
         return config.getBoolean("teleport-to-center", true);
     }
-
-    private Map<Pattern, Long> commandCooldowns;
 
     private Map<Pattern, Long> _getCommandCooldowns() {
         if (!config.isConfigurationSection("command-cooldowns")) {
@@ -1480,8 +1444,6 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getBoolean("command-cooldown-persistence", true);
     }
 
-    private boolean npcsInBalanceRanking = false;
-
     private boolean _isNpcsInBalanceRanking() {
         return config.getBoolean("npcs-in-balance-ranking", false);
     }
@@ -1490,8 +1452,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean isNpcsInBalanceRanking() {
         return npcsInBalanceRanking;
     }
-
-    private NumberFormat currencyFormat;
 
     private NumberFormat _getCurrencyFormat() {
         String currencyFormatString = config.getString("currency-format", "#,##0.00");
@@ -1517,8 +1477,6 @@ public class Settings implements net.ess3.api.ISettings {
     public NumberFormat getCurrencyFormat() {
         return this.currencyFormat;
     }
-
-    private List<EssentialsSign> unprotectedSigns = Collections.emptyList();
 
     @Override
     public List<EssentialsSign> getUnprotectedSignNames() {
@@ -1592,8 +1550,6 @@ public class Settings implements net.ess3.api.ISettings {
         return config.getBoolean("world-change-speed-reset", true);
     }
 
-    private List<String> defaultEnabledConfirmCommands;
-
     private List<String> _getDefaultEnabledConfirmCommands() {
         List<String> commands = config.getStringList("default-enabled-confirm-commands");
         for (int i = 0; i < commands.size(); i++) {
@@ -1606,13 +1562,11 @@ public class Settings implements net.ess3.api.ISettings {
     public List<String> getDefaultEnabledConfirmCommands() {
         return defaultEnabledConfirmCommands;
     }
-    
+
     @Override
     public boolean isConfirmCommandEnabledByDefault(String commandName) {
         return getDefaultEnabledConfirmCommands().contains(commandName.toLowerCase());
     }
-
-    private boolean teleportBackWhenFreedFromJail;
 
     private boolean _isTeleportBackWhenFreedFromJail() {
         return config.getBoolean("teleport-back-when-freed-from-jail", true);
@@ -1623,8 +1577,6 @@ public class Settings implements net.ess3.api.ISettings {
         return teleportBackWhenFreedFromJail;
     }
 
-    private boolean isCompassTowardsHomePerm;
-
     private boolean _isCompassTowardsHomePerm() {
         return config.getBoolean("compass-towards-home-perm", false);
     }
@@ -1633,8 +1585,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean isCompassTowardsHomePerm() {
         return isCompassTowardsHomePerm;
     }
-
-    private boolean isAllowWorldInBroadcastworld;
 
     private boolean _isAllowWorldInBroadcastworld() {
         return config.getBoolean("allow-world-in-broadcastworld", false);
@@ -1645,8 +1595,6 @@ public class Settings implements net.ess3.api.ISettings {
         return isAllowWorldInBroadcastworld;
     }
 
-    private String itemDbType; // #EasterEgg - admins can manually switch items provider if they want
-
     private String _getItemDbType() {
         return config.getString("item-db-type", "auto");
     }
@@ -1656,10 +1604,6 @@ public class Settings implements net.ess3.api.ISettings {
         return itemDbType;
     }
 
-    private boolean forceEnableRecipe; // https://github.com/EssentialsX/Essentials/issues/1397
-
-    private boolean allowOldIdSigns;
-
     private boolean _allowOldIdSigns() {
         return config.getBoolean("allow-old-id-signs", false);
     }
@@ -1668,8 +1612,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean allowOldIdSigns() {
         return allowOldIdSigns;
     }
-
-    private boolean isWaterSafe;
 
     private boolean _isWaterSafe() {
         boolean _isWaterSafe = config.getBoolean("is-water-safe", false);
@@ -1682,8 +1624,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean isWaterSafe() {
         return isWaterSafe;
     }
-    
-    private boolean isSafeUsermap;
 
     private boolean _isSafeUsermap() {
         return config.getBoolean("safe-usermap-names", true);
@@ -1694,8 +1634,6 @@ public class Settings implements net.ess3.api.ISettings {
         return isSafeUsermap;
     }
 
-    private boolean logCommandBlockCommands;
-
     private boolean _logCommandBlockCommands() {
         return config.getBoolean("log-command-block-commands", true);
     }
@@ -1704,8 +1642,6 @@ public class Settings implements net.ess3.api.ISettings {
     public boolean logCommandBlockCommands() {
         return logCommandBlockCommands;
     }
-
-    private Set<Predicate<String>> nickBlacklist;
 
     private Set<Predicate<String>> _getNickBlacklist() {
         Set<Predicate<String>> blacklist = new HashSet<>();
@@ -1726,8 +1662,6 @@ public class Settings implements net.ess3.api.ISettings {
         return nickBlacklist;
     }
 
-    private double maxProjectileSpeed;
-
     private double _getMaxProjectileSpeed() {
         return config.getDouble("max-projectile-speed", 8);
     }
@@ -1736,8 +1670,6 @@ public class Settings implements net.ess3.api.ISettings {
     public double getMaxProjectileSpeed() {
         return maxProjectileSpeed;
     }
-
-    private boolean removeEffectsOnHeal;
 
     private boolean _isRemovingEffectsOnHeal() {
         return config.getBoolean("remove-effects-on-heal", true);

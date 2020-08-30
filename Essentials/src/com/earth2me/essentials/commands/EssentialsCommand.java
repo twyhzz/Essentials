@@ -1,30 +1,19 @@
 package com.earth2me.essentials.commands;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import com.earth2me.essentials.CommandSource;
-import com.earth2me.essentials.PlayerList;
-import com.earth2me.essentials.IEssentialsModule;
-import com.earth2me.essentials.Trade;
-import com.earth2me.essentials.User;
+import com.earth2me.essentials.*;
 import com.earth2me.essentials.utils.FormatUtil;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.ess3.api.IEssentials;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.StringUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,13 +22,44 @@ import static com.earth2me.essentials.I18n.tl;
 
 
 public abstract class EssentialsCommand implements IEssentialsCommand {
+    protected static final Logger logger = Logger.getLogger("Essentials");
+    /**
+     * Common time durations (in seconds), for use in tab completion.
+     */
+    protected static final List<String> COMMON_DURATIONS = ImmutableList.of("1", "60", "600", "3600", "86400");
+    /**
+     * Common date diffs, for use in tab completion
+     */
+    protected static final List<String> COMMON_DATE_DIFFS = ImmutableList.of("1m", "15m", "1h", "3h", "12h", "1d", "1w", "1mo", "1y");
     private final transient String name;
     protected transient IEssentials ess;
     protected transient IEssentialsModule module;
-    protected static final Logger logger = Logger.getLogger("Essentials");
 
     protected EssentialsCommand(final String name) {
         this.name = name;
+    }
+
+    public static String getFinalArg(final String[] args, final int start) {
+        final StringBuilder bldr = new StringBuilder();
+        for (int i = start; i < args.length; i++) {
+            if (i != start) {
+                bldr.append(" ");
+            }
+            bldr.append(args[i]);
+        }
+        return bldr.toString();
+    }
+
+    private static boolean canInteractWith(User interactor, User interactee) {
+        if (interactor == null) {
+            return !interactee.isHidden();
+        }
+
+        if (interactor.equals(interactee)) {
+            return true;
+        }
+
+        return interactor.getBase().canSee(interactee.getBase());
     }
 
     @Override
@@ -219,17 +239,6 @@ public abstract class EssentialsCommand implements IEssentialsCommand {
         return getPlayers(server, sender);
     }
 
-    public static String getFinalArg(final String[] args, final int start) {
-        final StringBuilder bldr = new StringBuilder();
-        for (int i = start; i < args.length; i++) {
-            if (i != start) {
-                bldr.append(" ");
-            }
-            bldr.append(args[i]);
-        }
-        return bldr.toString();
-    }
-
     boolean canInteractWith(CommandSource interactor, User interactee) {
         if (interactor == null) {
             return !interactee.isHidden();
@@ -240,18 +249,6 @@ public abstract class EssentialsCommand implements IEssentialsCommand {
         }
 
         return true; // console
-    }
-
-    private static boolean canInteractWith(User interactor, User interactee) {
-        if (interactor == null) {
-            return !interactee.isHidden();
-        }
-
-        if (interactor.equals(interactee)) {
-            return true;
-        }
-
-        return interactor.getBase().canSee(interactee.getBase());
     }
 
     /**
@@ -312,7 +309,7 @@ public abstract class EssentialsCommand implements IEssentialsCommand {
 
     /**
      * Lists all commands.
-     *
+     * <p>
      * TODO: Use the real commandmap to do this automatically.
      */
     protected final List<String> getCommands(Server server) {
@@ -342,7 +339,7 @@ public abstract class EssentialsCommand implements IEssentialsCommand {
         String[] effectiveArgs = new String[numArgs];
         System.arraycopy(args, index, effectiveArgs, 0, numArgs);
         if (effectiveArgs.length == 0) {
-            effectiveArgs = new String[] { "" };
+            effectiveArgs = new String[]{""};
         }
         ess.getLogger().info(command + " -- " + Arrays.toString(effectiveArgs));
 
@@ -366,13 +363,4 @@ public abstract class EssentialsCommand implements IEssentialsCommand {
         });
         return future;
     }
-
-    /**
-     * Common time durations (in seconds), for use in tab completion.
-     */
-    protected static final List<String> COMMON_DURATIONS = ImmutableList.of("1", "60", "600", "3600", "86400");
-    /**
-     * Common date diffs, for use in tab completion
-     */
-    protected static final List<String> COMMON_DATE_DIFFS = ImmutableList.of("1m", "15m", "1h", "3h", "12h", "1d", "1w", "1mo", "1y");
 }

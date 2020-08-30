@@ -16,7 +16,10 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import static com.earth2me.essentials.I18n.tl;
 
@@ -24,10 +27,10 @@ import static com.earth2me.essentials.I18n.tl;
 @Deprecated // This sign will be removed soon
 public class SignProtection extends EssentialsSign {
     private final transient Set<Material> protectedBlocks = EnumUtil.getAllMatching(Material.class,
-        "CHEST",
-        "FURNACE",
-        "BURNING_FURNACE",
-        "DISPENSER");
+            "CHEST",
+            "FURNACE",
+            "BURNING_FURNACE",
+            "DISPENSER");
 
     public SignProtection() {
         super("Protection");

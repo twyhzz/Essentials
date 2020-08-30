@@ -16,6 +16,15 @@ public class VaultEco implements Method {
     }
 
     @Override
+    public void setPlugin(Plugin plugin) {
+        this.vault = plugin;
+        RegisteredServiceProvider<Economy> economyProvider = this.vault.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+        if (economyProvider != null) {
+            this.economy = economyProvider.getProvider();
+        }
+    }
+
+    @Override
     public boolean createAccount(String name, Double amount) {
         if (hasAccount(name)) {
             return false;
@@ -113,16 +122,6 @@ public class VaultEco implements Method {
             return false;
         }
     }
-
-    @Override
-    public void setPlugin(Plugin plugin) {
-        this.vault = plugin;
-        RegisteredServiceProvider<Economy> economyProvider = this.vault.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-        if (economyProvider != null) {
-            this.economy = economyProvider.getProvider();
-        }
-    }
-
 
     public static class VaultAccount implements MethodAccount {
         private final String name;

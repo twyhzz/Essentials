@@ -35,6 +35,10 @@ import static com.earth2me.essentials.I18n.tl;
 public class MetaItemStack {
     private static final Map<String, DyeColor> colorMap = new HashMap<>();
     private static final Map<String, FireworkEffect.Type> fireworkShape = new HashMap<>();
+    private static int bukkitUnbreakableSupport = -1;
+    private static Method spigotMethod;
+    private static Method setUnbreakableMethod;
+    private static boolean useNewSkullMethod = true;
 
     static {
         for (DyeColor color : DyeColor.values()) {
@@ -61,6 +65,24 @@ public class MetaItemStack {
 
     public MetaItemStack(final ItemStack stack) {
         this.stack = stack.clone();
+    }
+
+    private static void setSkullOwner(final IEssentials ess, final ItemStack stack, final String owner) {
+        if (!(stack.getItemMeta() instanceof SkullMeta)) return;
+
+        SkullMeta meta = (SkullMeta) stack.getItemMeta();
+        if (useNewSkullMethod) {
+            try {
+                meta.setOwningPlayer(ess.getServer().getOfflinePlayer(owner));
+                stack.setItemMeta(meta);
+                return;
+            } catch (NoSuchMethodError e) {
+                useNewSkullMethod = false;
+            }
+        }
+
+        meta.setOwner(owner);
+        stack.setItemMeta(meta);
     }
 
     public ItemStack getItemStack() {
@@ -192,7 +214,7 @@ public class MetaItemStack {
             final BookMeta meta = (BookMeta) stack.getItemMeta();
             meta.setTitle(title);
             stack.setItemMeta(meta);
-        } else if (split.length > 1 && split[0].equalsIgnoreCase("power") && (MaterialUtil.isFirework(stack.getType()))&& hasMetaPermission(sender, "firework-power", false, true, ess)) {
+        } else if (split.length > 1 && split[0].equalsIgnoreCase("power") && (MaterialUtil.isFirework(stack.getType())) && hasMetaPermission(sender, "firework-power", false, true, ess)) {
             final int power = NumberUtil.isInt(split[1]) ? Integer.parseInt(split[1]) : 0;
             final FireworkMeta meta = (FireworkMeta) stack.getItemMeta();
             meta.setPower(power > 3 ? 4 : power);
@@ -220,9 +242,9 @@ public class MetaItemStack {
                 String input = color[0];
                 if (input.startsWith("#")) { // Hex
                     meta.setColor(Color.fromRGB(
-                        Integer.valueOf(input.substring(1, 3), 16),
-                        Integer.valueOf(input.substring(3, 5), 16),
-                        Integer.valueOf(input.substring(5, 7), 16)));
+                            Integer.valueOf(input.substring(1, 3), 16),
+                            Integer.valueOf(input.substring(3, 5), 16),
+                            Integer.valueOf(input.substring(5, 7), 16)));
                 } else { // Int
                     meta.setColor(Color.fromRGB(Integer.parseInt(input)));
                 }
@@ -267,7 +289,7 @@ public class MetaItemStack {
     }
 
     public void addFireworkMeta(final CommandSource sender, final boolean allowShortName, final String string, final IEssentials ess) throws Exception {
-    if (MaterialUtil.isFirework(stack.getType())) {
+        if (MaterialUtil.isFirework(stack.getType())) {
             final String[] split = splitPattern.split(string, 2);
             if (split.length < 2) {
                 return;
@@ -478,7 +500,8 @@ public class MetaItemStack {
             PatternType patternType = null;
             try {
                 patternType = PatternType.valueOf(split[0]);
-            } catch (Exception ignored ) {}
+            } catch (Exception ignored) {
+            }
 
             final BannerMeta meta = (BannerMeta) stack.getItemMeta();
             if (split[0].equalsIgnoreCase("basecolor")) {
@@ -502,7 +525,8 @@ public class MetaItemStack {
             PatternType patternType = null;
             try {
                 patternType = PatternType.valueOf(split[0]);
-            } catch (Exception ignored ) {}
+            } catch (Exception ignored) {
+            }
 
             // Hacky fix for accessing Shield meta - https://github.com/drtshock/Essentials/pull/745#issuecomment-234843795
             BlockStateMeta meta = (BlockStateMeta) stack.getItemMeta();
@@ -540,10 +564,6 @@ public class MetaItemStack {
         }
     }
 
-    private static int bukkitUnbreakableSupport = -1;
-    private static Method spigotMethod;
-    private static Method setUnbreakableMethod;
-
     private void setUnbreakable(ItemStack is, boolean unbreakable) {
         ItemMeta meta = is.getItemMeta();
         try {
@@ -574,25 +594,5 @@ public class MetaItemStack {
         } catch (Throwable t) {
             t.printStackTrace();
         }
-    }
-
-    private static boolean useNewSkullMethod = true;
-
-    private static void setSkullOwner(final IEssentials ess, final ItemStack stack, final String owner) {
-        if (!(stack.getItemMeta() instanceof SkullMeta)) return;
-
-        SkullMeta meta = (SkullMeta) stack.getItemMeta();
-        if (useNewSkullMethod) {
-            try {
-                meta.setOwningPlayer(ess.getServer().getOfflinePlayer(owner));
-                stack.setItemMeta(meta);
-                return;
-            } catch (NoSuchMethodError e) {
-                useNewSkullMethod = false;
-            }
-        }
-
-        meta.setOwner(owner);
-        stack.setItemMeta(meta);
     }
 }

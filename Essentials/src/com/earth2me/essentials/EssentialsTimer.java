@@ -3,19 +3,22 @@ package com.earth2me.essentials;
 import net.ess3.api.IEssentials;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Set;
 import java.util.logging.Level;
 
 
 public class EssentialsTimer implements Runnable {
     private final transient IEssentials ess;
     private final transient Set<String> onlineUsers = new HashSet<>(); // Field is necessary for hidden users
-    private transient long lastPoll = System.nanoTime();
     private final LinkedList<Double> history = new LinkedList<>();
-    private int skip1 = 0;
-    private int skip2 = 0;
     private final long maxTime = 10 * 1000000;
     private final long tickInterval = 50;
+    private transient long lastPoll = System.nanoTime();
+    private int skip1 = 0;
+    private int skip2 = 0;
 
     EssentialsTimer(final IEssentials ess) {
         this.ess = ess;

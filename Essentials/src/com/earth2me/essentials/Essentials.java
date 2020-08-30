@@ -75,8 +75,10 @@ import static com.earth2me.essentials.I18n.tl;
 
 public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
     private static final Logger LOGGER = Logger.getLogger("Essentials");
-    private transient ISettings settings;
     private final transient TNTExplodeListener tntListener = new TNTExplodeListener(this);
+    private transient final Methods paymentMethod = new Methods();
+    private final transient Set<String> vanishedPlayers = new LinkedHashSet<>();
+    private transient ISettings settings;
     private transient Jails jails;
     private transient Warps warps;
     private transient Worth worth;
@@ -84,7 +86,6 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
     private transient Backup backup;
     private transient AbstractItemDb itemDb;
     private transient CustomItemResolver customItemResolver;
-    private transient final Methods paymentMethod = new Methods();
     private transient PermissionsHandler permissionsHandler;
     private transient AlternativeCommandsHandler alternativeCommandsHandler;
     private transient UserMap userMap;
@@ -92,7 +93,6 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
     private transient I18n i18n;
     private transient MetricsWrapper metrics;
     private transient EssentialsTimer timer;
-    private final transient Set<String> vanishedPlayers = new LinkedHashSet<>();
     private transient SpawnerItemProvider spawnerItemProvider;
     private transient SpawnerBlockProvider spawnerBlockProvider;
     private transient SpawnEggProvider spawnEggProvider;
@@ -112,6 +112,18 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
 
     public Essentials(final Server server) {
         super(new JavaPluginLoader(server), new PluginDescriptionFile("Essentials", "", "com.earth2me.essentials.Essentials"), null, null);
+    }
+
+    private static void addDefaultBackPermissionsToWorld(World w) {
+        String permName = "essentials.back.into." + w.getName();
+
+        Permission p = Bukkit.getPluginManager().getPermission(permName);
+        if (p == null) {
+            p = new Permission(permName,
+                    "Allows access to /back when the destination location is within world " + w.getName(),
+                    PermissionDefault.TRUE);
+            Bukkit.getPluginManager().addPermission(p);
+        }
     }
 
     @Override
@@ -241,7 +253,8 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
                                 ((Cancellable) event).setCancelled(true);
                             }
                         });
-                    } catch (ClassNotFoundException ignored) {}
+                    } catch (ClassNotFoundException ignored) {
+                    }
                 }
 
                 execTimer.mark("Init(Providers)");
@@ -688,7 +701,8 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
     @Override
     public User getUser(final UUID base) {
         final Player player = Bukkit.getPlayer(base);
-        if(player == null) {
+        System.out.println("UUID Debug " + player + " and name is " + (player != null ? player.getName() : ""));
+        if (player == null) {
             return null;
         }
         return userMap.getUser(player.getName());
@@ -937,15 +951,21 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
         return serverStateProvider;
     }
 
-    private static void addDefaultBackPermissionsToWorld(World w) {
-        String permName = "essentials.back.into." + w.getName();
+    private AbstractItemDb getItemDbFromConfig() {
+        final String setting = settings.getItemDbType();
 
-        Permission p = Bukkit.getPluginManager().getPermission(permName);
-        if (p == null) {
-            p = new Permission(permName,
-                    "Allows access to /back when the destination location is within world " + w.getName(),
-                    PermissionDefault.TRUE);
-            Bukkit.getPluginManager().addPermission(p);
+        if (setting.equalsIgnoreCase("json")) {
+            return new FlatItemDb(this);
+        } else if (setting.equalsIgnoreCase("csv")) {
+            return new LegacyItemDb(this);
+        } else {
+            VersionUtil.BukkitVersion version = VersionUtil.getServerBukkitVersion();
+
+            if (version.isHigherThanOrEqualTo(VersionUtil.v1_13_0_R01)) {
+                return new FlatItemDb(this);
+            } else {
+                return new LegacyItemDb(this);
+            }
         }
     }
 
@@ -983,24 +1003,6 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
         @Override
         public void run() {
             ess.reload();
-        }
-    }
-
-    private AbstractItemDb getItemDbFromConfig() {
-        final String setting = settings.getItemDbType();
-
-        if (setting.equalsIgnoreCase("json")) {
-            return new FlatItemDb(this);
-        } else if (setting.equalsIgnoreCase("csv")) {
-            return new LegacyItemDb(this);
-        } else {
-            VersionUtil.BukkitVersion version = VersionUtil.getServerBukkitVersion();
-
-            if (version.isHigherThanOrEqualTo(VersionUtil.v1_13_0_R01)) {
-                return new FlatItemDb(this);
-            } else {
-                return new LegacyItemDb(this);
-            }
         }
     }
 }

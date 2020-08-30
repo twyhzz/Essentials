@@ -235,8 +235,8 @@ public class LegacyItemDb extends AbstractItemDb {
 
     @Override
     public int getLegacyId(Material material) throws Exception {
-        for(Map.Entry<String, Integer> entry : items.entrySet()) {
-            if(material.name().toLowerCase(Locale.ENGLISH).equalsIgnoreCase(entry.getKey())) {
+        for (Map.Entry<String, Integer> entry : items.entrySet()) {
+            if (material.name().toLowerCase(Locale.ENGLISH).equalsIgnoreCase(entry.getKey())) {
                 return entry.getValue();
             }
         }

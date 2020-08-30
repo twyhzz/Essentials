@@ -8,10 +8,10 @@ import java.util.*;
 
 
 public class UserManager implements IConf {
-    private final transient EssentialsConf users;
-    private final transient List<String> spyusers = Collections.synchronizedList(new ArrayList<>());
     private static final String ADDRESS = "address";
     private static final String SPY = "spy";
+    private final transient EssentialsConf users;
+    private final transient List<String> spyusers = Collections.synchronizedList(new ArrayList<>());
 
     UserManager(final File folder) {
         users = new EssentialsConf(new File(folder, "users.yml"));

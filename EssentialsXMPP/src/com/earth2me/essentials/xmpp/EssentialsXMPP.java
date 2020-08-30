@@ -28,6 +28,10 @@ public class EssentialsXMPP extends JavaPlugin implements IEssentialsXMPP {
         return instance;
     }
 
+    static void updatePresence() {
+        instance.xmpp.updatePresence();
+    }
+
     @Override
     public void onEnable() {
         instance = this;
@@ -111,10 +115,6 @@ public class EssentialsXMPP extends JavaPlugin implements IEssentialsXMPP {
         return instance.xmpp.sendMessage(address, message);
     }
 
-    static void updatePresence() {
-        instance.xmpp.updatePresence();
-    }
-
     @Override
     public List<String> getSpyUsers() {
         return instance.users.getSpyUsers();
@@ -129,7 +129,8 @@ public class EssentialsXMPP extends JavaPlugin implements IEssentialsXMPP {
                     sendMessage(address, message);
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     @Override

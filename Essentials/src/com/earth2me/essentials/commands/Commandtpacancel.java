@@ -15,8 +15,9 @@ public class Commandtpacancel extends EssentialsCommand {
 
     /**
      * Cancel {@link User}'s tp request if its {@code requester} is equal to the given {@code requester}.
-     * @param ess ess instance
-     * @param user user holding tp request
+     *
+     * @param ess       ess instance
+     * @param user      user holding tp request
      * @param requester tp requester
      * @return whether tp was cancelled
      */

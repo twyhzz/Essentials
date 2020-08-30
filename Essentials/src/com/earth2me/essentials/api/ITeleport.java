@@ -17,7 +17,6 @@ public interface ITeleport {
      * @param loc      - Where should the player end up
      * @param cooldown - If cooldown should be enforced
      * @param cause    - The reported teleportPlayer cause
-     *
      * @throws Exception
      */
     @Deprecated
@@ -29,7 +28,6 @@ public interface ITeleport {
      * @param entity   - Where should the player end up
      * @param cooldown - If cooldown should be enforced
      * @param cause    - The reported teleportPlayer cause
-     *
      * @throws Exception
      */
     @Deprecated
@@ -44,7 +42,6 @@ public interface ITeleport {
      * @param loc       - Where should the player end up
      * @param chargeFor - What the user will be charged if teleportPlayer is successful
      * @param cause     - The reported teleportPlayer cause
-     *
      * @throws Exception
      */
     @Deprecated
@@ -56,7 +53,6 @@ public interface ITeleport {
      * @param entity    - Where should the player end up
      * @param chargeFor - What the user will be charged if teleportPlayer is successful
      * @param cause     - The reported teleportPlayer cause
-     *
      * @throws Exception
      */
     @Deprecated
@@ -69,7 +65,6 @@ public interface ITeleport {
      * @param loc       - Where should the player end up
      * @param chargeFor - What the user will be charged if teleportPlayer is successful
      * @param cause     - The reported teleportPlayer cause
-     *
      * @throws Exception
      */
     @Deprecated
@@ -82,7 +77,6 @@ public interface ITeleport {
      * @param entity    - Where should the player end up
      * @param chargeFor - What the user will be charged if teleportPlayer is successful
      * @param cause     - The reported teleportPlayer cause
-     *
      * @throws Exception
      */
     @Deprecated
@@ -93,7 +87,6 @@ public interface ITeleport {
      *
      * @param chargeFor - What the user will be charged if teleportPlayer is successful
      * @param cause     - The reported teleportPlayer cause
-     *
      * @throws Exception
      */
     @Deprecated
@@ -106,7 +99,6 @@ public interface ITeleport {
      * @param warp      - The name of the warp the user will be teleported too.
      * @param chargeFor - What the user will be charged if teleportPlayer is successful
      * @param cause     - The reported teleportPlayer cause
-     *
      * @throws Exception
      */
     @Deprecated
@@ -116,7 +108,6 @@ public interface ITeleport {
      * Teleport wrapper used to handle /back teleports
      *
      * @param chargeFor - What the user will be charged if teleportPlayer is successful
-     *
      * @throws Exception
      */
     @Deprecated
@@ -130,7 +121,6 @@ public interface ITeleport {
      * @param teleporter - The user performing the /back command.
      *                   This value may be {@code null} to indicate console.
      * @param chargeFor  - What the {@code teleporter} will be charged if teleportPlayer is successful
-     *
      * @throws Exception
      */
     @Deprecated

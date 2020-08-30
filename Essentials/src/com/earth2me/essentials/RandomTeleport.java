@@ -9,20 +9,16 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Queue;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class RandomTeleport implements IConf {
+    private static final Random RANDOM = new Random();
+    private static final int HIGHEST_BLOCK_Y_OFFSET = VersionUtil.getServerBukkitVersion().isHigherThanOrEqualTo(VersionUtil.v1_15_R01) ? 1 : 0;
     private final IEssentials essentials;
     private final EssentialsConf config;
     private final ConcurrentLinkedQueue<Location> cachedLocations = new ConcurrentLinkedQueue<>();
-    private static final Random RANDOM = new Random();
-    private static final int HIGHEST_BLOCK_Y_OFFSET = VersionUtil.getServerBukkitVersion().isHigherThanOrEqualTo(VersionUtil.v1_15_R01) ? 1 : 0;
 
     public RandomTeleport(final IEssentials essentials) {
         this.essentials = essentials;

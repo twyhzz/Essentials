@@ -221,7 +221,7 @@ world-change-speed-reset: true
 mute-commands:
   - f
   - kittycannon
- # - '*'
+  # - '*'
 
 # If you do not wish to use a permission system, you can define a list of 'player perms' below.
 # This list has no effect if you are using a supported permissions system.
@@ -334,24 +334,24 @@ pastebin-createkit: false
 # Color is not an actual sign, it's for enabling using color codes on signs, when the correct permissions are given.
 
 enabledSigns:
-  #- color
-  #- balance
-  #- buy
-  #- sell
-  #- trade
-  #- free
-  #- disposal
-  #- warp
-  #- kit
-  #- mail
-  #- enchant
-  #- gamemode
-  #- heal
-  #- info
-  #- spawnmob
-  #- repair
-  #- time
-  #- weather
+#- color
+#- balance
+#- buy
+#- sell
+#- trade
+#- free
+#- disposal
+#- warp
+#- kit
+#- mail
+#- enchant
+#- gamemode
+#- heal
+#- info
+#- spawnmob
+#- repair
+#- time
+#- weather
 
 # How many times per second can Essentials signs be interacted with per player.
 # Values should be between 1-20, 20 being virtually no lag protection.
@@ -370,7 +370,7 @@ allow-old-id-signs: false
 #
 # See https://github.com/drtshock/Essentials/pull/699 for more information.
 unprotected-sign-names:
-  #- kit
+#- kit
 
 # Backup runs a custom batch/bash command at a specified interval.
 # The server will save the world before executing the backup command, and disable
@@ -393,15 +393,15 @@ per-warp-permission: false
 # You can hide and merge the groups displayed in /list by defining the desired behaviour here.
 # Detailed instructions and examples can be found on the wiki: http://wiki.ess3.net/wiki/List
 list:
-    # To merge groups, list the groups you wish to merge
-    #Staff: owner admin moderator
-    Admins: owner admin
-    # To limit groups, set a max user limit
-    #builder: 20
-    # To hide groups, set the group as hidden
-    #default: hidden
-    # Uncomment the line below to simply list all players with no grouping
-    #Players: '*'
+  # To merge groups, list the groups you wish to merge
+  #Staff: owner admin moderator
+  Admins: owner admin
+  # To limit groups, set a max user limit
+  #builder: 20
+  # To hide groups, set the group as hidden
+  #default: hidden
+  # Uncomment the line below to simply list all players with no grouping
+  #Players: '*'
 
 # Displays real names in /list next to players who are using a nickname.
 real-names-on-list: false
@@ -705,10 +705,10 @@ starting-balance: 0
 # Defines the cost to use the given commands PER USE.
 # Some commands like /repair have sub-costs, check the wiki for more information.
 command-costs:
-  # /example costs $1000 PER USE
-  #example: 1000
-  # /kit tools costs $1500 PER USE
-  #kit-tools: 1500
+# /example costs $1000 PER USE
+#example: 1000
+# /kit tools costs $1500 PER USE
+#kit-tools: 1500
 
 # Set this to a currency symbol you want to use.
 # Remember, if you want to use special characters in this document, 
@@ -800,7 +800,7 @@ chat:
 
   # If you are using group formats make sure to remove the '#' to allow the setting to be read.
   # Note: Group names are case-sensitive so you must match them up with your permission plugin.
-  
+
   # You can use permissions to control whether players can use formatting codes in their chat messages.
   # See https://essentialsx.cf/wiki/Color-Permissions.html for more information.
 
@@ -952,14 +952,14 @@ protect:
       thunder: false
       lightning: false
 
-############################################################
-# +------------------------------------------------------+ #
-# |                EssentialsX AntiBuild                 | #
-# +------------------------------------------------------+ #
-############################################################
+    ############################################################
+    # +------------------------------------------------------+ #
+    # |                EssentialsX AntiBuild                 | #
+    # +------------------------------------------------------+ #
+    ############################################################
 
-  # You need to install EssentialsX AntiBuild for this section to work.
-  # See https://essentialsx.cf/wiki/Module-Breakdown.html and http://wiki.ess3.net/wiki/AntiBuild for more information.
+    # You need to install EssentialsX AntiBuild for this section to work.
+    # See https://essentialsx.cf/wiki/Module-Breakdown.html and http://wiki.ess3.net/wiki/AntiBuild for more information.
 
     # Should people without the essentials.build permission be allowed to build?
     # Set true to disable building for those people.

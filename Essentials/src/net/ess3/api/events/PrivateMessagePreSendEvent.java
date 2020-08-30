@@ -23,6 +23,10 @@ public class PrivateMessagePreSendEvent extends Event implements Cancellable {
         this.message = message;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public IMessageRecipient getSender() {
         return sender;
     }
@@ -51,10 +55,6 @@ public class PrivateMessagePreSendEvent extends Event implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

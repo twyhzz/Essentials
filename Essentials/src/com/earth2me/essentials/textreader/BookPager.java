@@ -9,10 +9,10 @@ import static com.earth2me.essentials.I18n.tl;
 
 
 public class BookPager {
-    private final transient IText text;
     final double pageMax = 254;
     final double charMax = 18.5;
     final int lineMax = 12;
+    private final transient IText text;
 
     public BookPager(final IText text) {
         this.text = text;

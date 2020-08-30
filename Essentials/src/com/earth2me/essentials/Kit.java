@@ -10,7 +10,6 @@ import com.earth2me.essentials.utils.DateUtil;
 import com.earth2me.essentials.utils.NumberUtil;
 import net.ess3.api.IEssentials;
 import net.ess3.api.events.KitClaimEvent;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -191,11 +190,11 @@ public class Kit {
                     // We pass a null sender here because kits should not do perm checks
                     metaStack.parseStringMeta(null, allowUnsafe, parts, 2, ess);
                 }
-                
+
                 itemList.add(metaStack.getItemStack());
             }
-            
-            
+
+
             final Map<Integer, ItemStack> overfilled;
             final boolean allowOversizedStacks = user.isAuthorized("essentials.oversizedstacks");
             final boolean isDropItemsIfFull = ess.getSettings().isDropItemsIfFull();

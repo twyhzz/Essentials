@@ -1,13 +1,11 @@
 package net.ess3.api.events;
 
+import com.earth2me.essentials.Kit;
+import net.ess3.api.IUser;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import com.earth2me.essentials.Kit;
-
-import net.ess3.api.IUser;
 
 /**
  * Called when the player is given a kit
@@ -24,6 +22,10 @@ public class KitClaimEvent extends Event implements Cancellable {
         super(!Bukkit.getServer().isPrimaryThread());
         this.user = user;
         this.kit = kit;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     public IUser getUser() {
@@ -46,10 +48,6 @@ public class KitClaimEvent extends Event implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

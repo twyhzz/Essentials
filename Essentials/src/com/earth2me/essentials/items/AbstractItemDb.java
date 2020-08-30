@@ -27,9 +27,8 @@ import static com.earth2me.essentials.I18n.tl;
 public abstract class AbstractItemDb implements IConf, net.ess3.api.IItemDb {
 
     protected final IEssentials ess;
-    protected boolean ready = false;
-
     private final Map<PluginKey, ItemResolver> resolverMap = new HashMap<>();
+    protected boolean ready = false;
 
     AbstractItemDb(IEssentials ess) {
         this.ess = ess;

@@ -7,9 +7,11 @@ import org.bukkit.GameMode;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -59,4 +61,25 @@ public class EssentialsBlockListener implements Listener {
             ess.scheduleSyncDelayedTask(new UnlimitedItemSpawnTask());
         }
     }
+
+    @EventHandler
+    public void onPlace(final BlockPlaceEvent event) {
+        final Player player = event.getPlayer();
+        final GameMode mode = player.getGameMode();
+        final User user = ess.getUser(player);
+        if (user.isGodModeEnabled() || user.isVanished() || player.isFlying() || mode != GameMode.SURVIVAL) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBreak(final BlockBreakEvent event) {
+        final Player player = event.getPlayer();
+        final GameMode mode = player.getGameMode();
+        final User user = ess.getUser(player);
+        if (user.isGodModeEnabled() || user.isVanished() || player.isFlying() || mode != GameMode.SURVIVAL) {
+            event.setCancelled(true);
+        }
+    }
+
 }

@@ -14,16 +14,20 @@ import org.bukkit.event.HandlerList;
  */
 public class SignEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    private boolean cancelled = false;
     ISign sign;
     EssentialsSign essSign;
     IUser user;
+    private boolean cancelled = false;
 
     public SignEvent(final ISign sign, final EssentialsSign essSign, final IUser user) {
         super(!Bukkit.getServer().isPrimaryThread());
         this.sign = sign;
         this.essSign = essSign;
         this.user = user;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     public ISign getSign() {
@@ -40,10 +44,6 @@ public class SignEvent extends Event implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 

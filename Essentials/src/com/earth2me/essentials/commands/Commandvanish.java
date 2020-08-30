@@ -28,7 +28,7 @@ public class Commandvanish extends EssentialsToggleCommand {
         if (enabled == null) {
             enabled = !user.isVanished();
         }
-        
+
         VanishStatusChangeEvent vanishEvent = new VanishStatusChangeEvent(sender.isPlayer() ? ess.getUser(sender.getPlayer()) : null, user, enabled);
         ess.getServer().getPluginManager().callEvent(vanishEvent);
         if (vanishEvent.isCancelled()) {

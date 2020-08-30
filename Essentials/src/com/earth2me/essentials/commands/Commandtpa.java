@@ -40,12 +40,12 @@ public class Commandtpa extends EssentialsCommand {
         }
         // Don't let sender request teleport twice to the same player.
         if (user.getConfigUUID().equals(player.getTeleportRequest()) && player.hasOutstandingTeleportRequest() // Check timeout
-            && !player.isTpRequestHere()) { // Make sure the last teleport request was actually tpa and not tpahere
+                && !player.isTpRequestHere()) { // Make sure the last teleport request was actually tpa and not tpahere
             throw new Exception(tl("requestSentAlready", player.getDisplayName()));
         }
         if (player.isAutoTeleportEnabled() && !player.isIgnoredPlayer(user)) {
             final Trade charge = new Trade(this.getName(), ess);
-            AsyncTeleport teleport = (AsyncTeleport) user.getAsyncTeleport();
+            AsyncTeleport teleport = user.getAsyncTeleport();
             teleport.setTpType(AsyncTeleport.TeleportType.TPA);
             CompletableFuture<Boolean> future = getNewExceptionFuture(user.getSource(), commandLabel);
             teleport.teleport(player.getBase(), charge, PlayerTeleportEvent.TeleportCause.COMMAND, future);

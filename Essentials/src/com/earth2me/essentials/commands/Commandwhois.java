@@ -9,9 +9,9 @@ import com.earth2me.essentials.utils.NumberUtil;
 import org.bukkit.Server;
 import org.bukkit.Statistic;
 
-import java.util.Locale;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import static com.earth2me.essentials.I18n.tl;
 
@@ -70,7 +70,7 @@ public class Commandwhois extends EssentialsCommand {
             sender.sendMessage(tl("whoisMuted", (user.isMuted() ? (muteTimeout > 0 ? DateUtil.formatDateDiff(muteTimeout) : tl("true")) : tl("false"))));
         } else {
             sender.sendMessage(tl("whoisMutedReason", (user.isMuted() ? (muteTimeout > 0 ? DateUtil.formatDateDiff(muteTimeout) : tl("true")) : tl("false")),
-                user.getMuteReason()));
+                    user.getMuteReason()));
         }
     }
 

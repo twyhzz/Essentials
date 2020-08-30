@@ -18,15 +18,15 @@ import java.util.logging.Level;
 
 public class EssentialsServerListener implements Listener {
     private static final List<String> ignoredSLPECallers = Arrays.asList(
-        ".LegacyPingHandler.channelRead(", // CB responding to pings from pre-Netty clients
-        "de.dytanic.cloudnet.bridge.BukkitBootstrap", // CloudNet v2 doing... something
-        "de.dytanic.cloudnet.ext.bridge.bukkit.BukkitCloudNetBridgePlugin" // CloudNet v3 doing... something else
+            ".LegacyPingHandler.channelRead(", // CB responding to pings from pre-Netty clients
+            "de.dytanic.cloudnet.bridge.BukkitBootstrap", // CloudNet v2 doing... something
+            "de.dytanic.cloudnet.ext.bridge.bukkit.BukkitCloudNetBridgePlugin" // CloudNet v3 doing... something else
     );
 
     private final transient IEssentials ess;
+    private final boolean isPaperSample;
     private boolean unsupportedLogged = false;
     private boolean npeWarned = false;
-    private final boolean isPaperSample;
     private Method setSampleText;
     private Method getSampleText;
 

@@ -6,11 +6,13 @@ import net.ess3.api.InvalidNameException;
 import net.ess3.api.InvalidWorldException;
 import org.bukkit.Location;
 import org.bukkit.Server;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import static com.earth2me.essentials.I18n.tl;
 
 
@@ -57,7 +59,7 @@ public class Warps implements IConf, net.ess3.api.IWarps {
     public void setWarp(String name, Location loc) throws Exception {
         setWarp(null, name, loc);
     }
-    
+
     @Override
     public void setWarp(IUser user, String name, Location loc) throws Exception {
         String filename = StringUtil.sanitizeFileName(name);
@@ -79,7 +81,7 @@ public class Warps implements IConf, net.ess3.api.IWarps {
             throw new IOException(tl("invalidWarpName"));
         }
     }
-    
+
     @Override
     public UUID getLastOwner(String warp) throws WarpNotFoundException {
         EssentialsConf conf = warpPoints.get(new StringIgnoreCase(warp));
@@ -89,11 +91,11 @@ public class Warps implements IConf, net.ess3.api.IWarps {
         UUID uuid = null;
         try {
             uuid = UUID.fromString(conf.getString("lastowner"));
+        } catch (Exception ignored) {
         }
-        catch (Exception ignored) {}
         return uuid;
     }
-    
+
     @Override
     public void removeWarp(String name) throws Exception {
         EssentialsConf conf = warpPoints.get(new StringIgnoreCase(name));

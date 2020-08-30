@@ -11,10 +11,10 @@ import java.util.logging.Level;
 
 
 public abstract class AsyncStorageObjectHolder<T extends StorageObject> implements IConf, IStorageObjectHolder<T>, IReload {
-    private transient T data;
+    protected final transient IEssentials ess;
     private final transient ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
     private final transient Class<T> clazz;
-    protected final transient IEssentials ess;
+    private transient T data;
 
     public AsyncStorageObjectHolder(final IEssentials ess, final Class<T> clazz) {
         this.ess = ess;

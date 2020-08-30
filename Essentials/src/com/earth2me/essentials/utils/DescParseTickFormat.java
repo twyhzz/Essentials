@@ -60,6 +60,9 @@ public final class DescParseTickFormat {
         resetAliases.add("default");
     }
 
+    private DescParseTickFormat() {
+    }
+
     // ============================================
     public static long parse(String desc) throws NumberFormatException {
         // Only look at alphanumeric and lowercase and : for 24:00
@@ -241,8 +244,5 @@ public final class DescParseTickFormat {
         cal.add(Calendar.SECOND, (int) seconds + 1); // To solve rounding errors.
 
         return cal.getTime();
-    }
-
-    private DescParseTickFormat() {
     }
 }

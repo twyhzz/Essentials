@@ -1,22 +1,7 @@
 package com.earth2me.essentials;
 
 import net.ess3.nms.refl.ReflUtil;
-import org.bukkit.Achievement;
-import org.bukkit.BanList;
-import org.bukkit.Effect;
-import org.bukkit.EntityEffect;
-import org.bukkit.GameMode;
-import org.bukkit.Instrument;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Note;
-import org.bukkit.Particle;
-import org.bukkit.Server;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.Statistic;
-import org.bukkit.WeatherType;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.attribute.Attribute;
@@ -26,22 +11,11 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Vehicle;
-import org.bukkit.entity.Villager;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.InventoryView.Property;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.MainHand;
-import org.bukkit.inventory.Merchant;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.permissions.Permission;
@@ -56,18 +30,13 @@ import org.bukkit.util.Vector;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class OfflinePlayer implements Player {
     private final transient Server server;
+    private final transient org.bukkit.OfflinePlayer base;
     private transient Location location = new Location(null, 0, 0, 0, 0, 0);
     private transient World world;
-    private final transient org.bukkit.OfflinePlayer base;
     private boolean allowFlight = false;
     private boolean isFlying = false;
     private String name;
@@ -97,10 +66,6 @@ public class OfflinePlayer implements Player {
 
     @Override
     public void setDisplayName(String string) {
-    }
-
-    @Override
-    public void setCompassTarget(Location lctn) {
     }
 
     @Override
@@ -155,14 +120,14 @@ public class OfflinePlayer implements Player {
         return location;
     }
 
-    @Override
-    public World getWorld() {
-        return world;
-    }
-
     public void setLocation(Location loc) {
         location = loc;
         world = loc.getWorld();
+    }
+
+    @Override
+    public World getWorld() {
+        return world;
     }
 
     public void teleportTo(Location lctn) {
@@ -269,12 +234,12 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
-    public int getMaxFireTicks() {
-        return 0;
+    public void setFireTicks(int i) {
     }
 
     @Override
-    public void setFireTicks(int i) {
+    public int getMaxFireTicks() {
+        return 0;
     }
 
     @Override
@@ -294,12 +259,12 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
-    public void setVelocity(Vector vector) {
+    public Vector getVelocity() {
+        return new Vector(0, 0, 0);
     }
 
     @Override
-    public Vector getVelocity() {
-        return new Vector(0, 0, 0);
+    public void setVelocity(Vector vector) {
     }
 
     @Override
@@ -332,6 +297,10 @@ public class OfflinePlayer implements Player {
     @Override
     public Location getCompassTarget() {
         return null;
+    }
+
+    @Override
+    public void setCompassTarget(Location lctn) {
     }
 
     @Override
@@ -444,12 +413,12 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
-    public void setSleepingIgnored(boolean bln) {
+    public boolean isSleepingIgnored() {
+        return true;
     }
 
     @Override
-    public boolean isSleepingIgnored() {
-        return true;
+    public void setSleepingIgnored(boolean bln) {
     }
 
     @Override
@@ -536,12 +505,12 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
-    public void setLastDamageCause(EntityDamageEvent ede) {
+    public EntityDamageEvent getLastDamageCause() {
+        return null;
     }
 
     @Override
-    public EntityDamageEvent getLastDamageCause() {
-        return null;
+    public void setLastDamageCause(EntityDamageEvent ede) {
     }
 
     @Override
@@ -706,12 +675,12 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
-    public void setPlayerListName(String name) {
+    public String getPlayerListName() {
+        return name;
     }
 
     @Override
-    public String getPlayerListName() {
-        return name;
+    public void setPlayerListName(String name) {
     }
 
     @Override
@@ -726,6 +695,10 @@ public class OfflinePlayer implements Player {
     @Override
     public double getMaxHealth() {
         return 0D;
+    }
+
+    @Override
+    public void setMaxHealth(double i) {
     }
 
     @Override
@@ -756,13 +729,6 @@ public class OfflinePlayer implements Player {
         return null;
     }
 
-    void setName(final String name) {
-        this.name = base.getName();
-        if (this.name == null) {
-            this.name = name;
-        }
-    }
-
     @Override
     public void sendPluginMessage(Plugin plugin, String string, byte[] bytes) {
     }
@@ -773,17 +739,13 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
-    public void setAllowFlight(boolean bln) {
-        allowFlight = bln;
-    }
-
-    @Override
     public boolean getAllowFlight() {
         return allowFlight;
     }
 
     @Override
-    public void setBedSpawnLocation(Location lctn) {
+    public void setAllowFlight(boolean bln) {
+        allowFlight = bln;
     }
 
     @Override
@@ -1032,21 +994,21 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
-    public void setFlySpeed(float value) throws IllegalArgumentException {
-    }
-
-    @Override
-    public void setWalkSpeed(float value) throws IllegalArgumentException {
-    }
-
-    @Override
     public float getFlySpeed() {
         return 0.1f;
     }
 
     @Override
+    public void setFlySpeed(float value) throws IllegalArgumentException {
+    }
+
+    @Override
     public float getWalkSpeed() {
         return 0.2f;
+    }
+
+    @Override
+    public void setWalkSpeed(float value) throws IllegalArgumentException {
     }
 
     @Override
@@ -1082,12 +1044,12 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
-    public void setCanPickupItems(boolean bln) {
+    public boolean getCanPickupItems() {
+        return false;
     }
 
     @Override
-    public boolean getCanPickupItems() {
-        return false;
+    public void setCanPickupItems(boolean bln) {
     }
 
     @Override
@@ -1109,15 +1071,7 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
-    public void setMaxHealth(double i) {
-    }
-
-    @Override
     public void resetMaxHealth() {
-    }
-
-    @Override
-    public void setCustomName(String string) {
     }
 
     @Override
@@ -1126,11 +1080,20 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
-    public void setCustomNameVisible(boolean bln) {
+    public void setCustomName(String string) {
     }
 
     @Override
     public boolean isCustomNameVisible() {
+        return false;
+    }
+
+    @Override
+    public void setCustomNameVisible(boolean bln) {
+    }
+
+    @Override
+    public boolean isGlowing() {
         return false;
     }
 
@@ -1140,18 +1103,13 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
-    public boolean isGlowing() {
+    public boolean isInvulnerable() {
         return false;
     }
 
     @Override
     public void setInvulnerable(boolean flag) {
 
-    }
-
-    @Override
-    public boolean isInvulnerable() {
-        return false;
     }
 
     @Override
@@ -1205,12 +1163,12 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
-    public void setPlayerWeather(WeatherType arg0) {
+    public WeatherType getPlayerWeather() {
+        return null; // per player weather, null means default anyways
     }
 
     @Override
-    public WeatherType getPlayerWeather() {
-        return null; // per player weather, null means default anyways
+    public void setPlayerWeather(WeatherType arg0) {
     }
 
     @Override
@@ -1275,17 +1233,13 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
-    public void setHealthScale(double arg0) throws IllegalArgumentException {
-
-    }
-
-    @Override
     public double getHealthScale() {
         return 0D;
     }
 
     @Override
-    public void setSpectatorTarget(Entity entity) {
+    public void setHealthScale(double arg0) throws IllegalArgumentException {
+
     }
 
     @Override
@@ -1324,13 +1278,13 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
-    public void setCollidable(boolean collidable) {
-
+    public boolean isCollidable() {
+        return false;
     }
 
     @Override
-    public boolean isCollidable() {
-        return false;
+    public void setCollidable(boolean collidable) {
+
     }
 
     @Override
@@ -1348,8 +1302,19 @@ public class OfflinePlayer implements Player {
     }
 
     @Override
+    public void setBedSpawnLocation(Location lctn) {
+    }
+
+    @Override
     public String getName() {
         return name;
+    }
+
+    void setName(final String name) {
+        this.name = base.getName();
+        if (this.name == null) {
+            this.name = name;
+        }
     }
 
     @Override
@@ -1440,6 +1405,10 @@ public class OfflinePlayer implements Player {
     @Override
     public Entity getSpectatorTarget() {
         return null;
+    }
+
+    @Override
+    public void setSpectatorTarget(Entity entity) {
     }
 
     @Override

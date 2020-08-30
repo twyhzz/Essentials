@@ -1,7 +1,6 @@
 package com.earth2me.essentials.protect;
 
 import com.earth2me.essentials.utils.EnumUtil;
-
 import com.earth2me.essentials.utils.MaterialUtil;
 import org.bukkit.Material;
 import org.bukkit.World;

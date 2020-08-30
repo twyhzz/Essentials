@@ -166,35 +166,13 @@ public enum MobData {
     ;
 
 
-    public enum Data {
-        ADULT,
-        BABY,
-        CHEST,
-        ADULTZOMBIE,
-        BABYZOMBIE,
-        HORSESADDLE,
-        PIGSADDLE,
-        ELECTRIFIED,
-        ANGRY,
-        TAMED,
-        COLORABLE,
-        EXP,
-        SIZE,
-        RAID_LEADER,
-        FISH_BODY_COLOR,
-        FISH_PATTERN_COLOR,
-    }
-
-
     public static final Logger logger = Logger.getLogger("Essentials");
-
     final private String nickname;
     final private List<String> suggestions;
     final private Object type;
     final private Object value;
     final private boolean isPublic;
     private String matched;
-
     MobData(String n, Object type, Object value, boolean isPublic) {
         this.nickname = n;
         this.matched = n;
@@ -383,5 +361,24 @@ public enum MobData {
         } else {
             logger.warning("Unknown mob data type: " + this.toString());
         }
+    }
+
+    public enum Data {
+        ADULT,
+        BABY,
+        CHEST,
+        ADULTZOMBIE,
+        BABYZOMBIE,
+        HORSESADDLE,
+        PIGSADDLE,
+        ELECTRIFIED,
+        ANGRY,
+        TAMED,
+        COLORABLE,
+        EXP,
+        SIZE,
+        RAID_LEADER,
+        FISH_BODY_COLOR,
+        FISH_PATTERN_COLOR,
     }
 }

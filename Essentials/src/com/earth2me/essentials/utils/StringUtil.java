@@ -11,6 +11,9 @@ public class StringUtil {
     private static final Pattern STRICTINVALIDCHARS = Pattern.compile("[^a-z0-9]");
     private static final Pattern INVALIDCHARS = Pattern.compile("[^\t\n\r\u0020-\u007E\u0085\u00A0-\uD7FF\uE000-\uFFFC]");
 
+    private StringUtil() {
+    }
+
     //Used to clean file names before saving to disk
     public static String sanitizeFileName(final String name) {
         return INVALIDFILECHARS.matcher(name.toLowerCase(Locale.ENGLISH)).replaceAll("_");
@@ -77,11 +80,9 @@ public class StringUtil {
     public static UUID toUUID(String input) {
         try {
             return UUID.fromString(input);
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException ignored) {
+        }
 
         return null;
-    }
-
-    private StringUtil() {
     }
 }

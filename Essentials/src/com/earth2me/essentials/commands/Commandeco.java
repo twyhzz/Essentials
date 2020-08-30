@@ -74,11 +74,6 @@ public class Commandeco extends EssentialsLoopCommand {
         });
     }
 
-
-    private enum EcoCommands {
-        GIVE, TAKE, SET, RESET
-    }
-
     @Override
     protected void updatePlayer(Server server, CommandSource sender, User user, String[] args) throws NotEnoughArgumentsException, PlayerExemptException, ChargeException, MaxMoneyException {
 
@@ -103,5 +98,9 @@ public class Commandeco extends EssentialsLoopCommand {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    private enum EcoCommands {
+        GIVE, TAKE, SET, RESET
     }
 }
