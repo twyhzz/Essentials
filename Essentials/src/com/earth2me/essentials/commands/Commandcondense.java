@@ -18,11 +18,11 @@ import static com.earth2me.essentials.I18n.tl;
 
 
 public class Commandcondense extends EssentialsCommand {
-    private final Map<ItemStack, SimpleRecipe> condenseList = new HashMap<>();
-
     public Commandcondense() {
         super("condense");
     }
+
+    private final Map<ItemStack, SimpleRecipe> condenseList = new HashMap<>();
 
     @Override
     public void run(final Server server, final User user, final String commandLabel, final String[] args) throws Exception {
@@ -170,14 +170,6 @@ public class Commandcondense extends EssentialsCommand {
         return null;
     }
 
-    @Override
-    protected List<String> getTabCompleteOptions(Server server, User user, String commandLabel, String[] args) {
-        if (args.length == 1) {
-            return getMatchingItems(args[0]);
-        } else {
-            return Collections.emptyList();
-        }
-    }
 
     private static class SimpleRecipe implements Recipe {
         private final ItemStack result;
@@ -198,10 +190,18 @@ public class Commandcondense extends EssentialsCommand {
         }
     }
 
+    @Override
+    protected List<String> getTabCompleteOptions(Server server, User user, String commandLabel, String[] args) {
+        if (args.length == 1) {
+            return getMatchingItems(args[0]);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
     private static class SimpleRecipeComparator implements Comparator<SimpleRecipe> {
 
         private static final SimpleRecipeComparator INSTANCE = new SimpleRecipeComparator();
-
         @Override
         public int compare(SimpleRecipe o1, SimpleRecipe o2) {
             return Integer.compare(o2.getInput().getAmount(), o1.getInput().getAmount());

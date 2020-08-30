@@ -17,22 +17,15 @@ import static com.earth2me.essentials.I18n.tl;
 
 
 public class Commandbalancetop extends EssentialsCommand {
-    public static final int MINUSERS = 50;
-    private static final int CACHETIME = 2 * 60 * 1000;
-    private static final SimpleTextInput cache = new SimpleTextInput();
-    private static final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    private static long cacheage = 0;
     public Commandbalancetop() {
         super("balancetop");
     }
 
-    private static void outputCache(final CommandSource sender, int page) {
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(cacheage);
-        final DateFormat format = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-        sender.sendMessage(tl("balanceTop", format.format(cal.getTime())));
-        new TextPager(cache).showPage(Integer.toString(page), null, "balancetop", sender);
-    }
+    private static final int CACHETIME = 2 * 60 * 1000;
+    public static final int MINUSERS = 50;
+    private static final SimpleTextInput cache = new SimpleTextInput();
+    private static long cacheage = 0;
+    private static final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     @Override
     protected void run(final Server server, final CommandSource sender, final String commandLabel, final String[] args) throws Exception {
@@ -69,18 +62,14 @@ public class Commandbalancetop extends EssentialsCommand {
 
     }
 
-    @Override
-    protected List<String> getTabCompleteOptions(Server server, CommandSource sender, String commandLabel, String[] args) {
-        if (args.length == 1) {
-            List<String> options = Lists.newArrayList("1");
-            if (!sender.isPlayer() || ess.getUser(sender.getPlayer()).isAuthorized("essentials.balancetop.force")) {
-                options.add("force");
-            }
-            return options;
-        } else {
-            return Collections.emptyList();
-        }
+    private static void outputCache(final CommandSource sender, int page) {
+        final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(cacheage);
+        final DateFormat format = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+        sender.sendMessage(tl("balanceTop", format.format(cal.getTime())));
+        new TextPager(cache).showPage(Integer.toString(page), null, "balancetop", sender);
     }
+
 
     private class Calculator implements Runnable {
         private final transient Viewer viewer;
@@ -140,6 +129,7 @@ public class Commandbalancetop extends EssentialsCommand {
         }
     }
 
+
     private class Viewer implements Runnable {
         private final transient CommandSource sender;
         private final transient int page;
@@ -165,6 +155,19 @@ public class Commandbalancetop extends EssentialsCommand {
                 lock.readLock().unlock();
             }
             ess.runTaskAsynchronously(new Calculator(new Viewer(sender, commandLabel, page, false), force));
+        }
+    }
+
+    @Override
+    protected List<String> getTabCompleteOptions(Server server, CommandSource sender, String commandLabel, String[] args) {
+        if (args.length == 1) {
+            List<String> options = Lists.newArrayList("1");
+            if (!sender.isPlayer() || ess.getUser(sender.getPlayer()).isAuthorized("essentials.balancetop.force")) {
+                options.add("force");
+            }
+            return options;
+        } else {
+            return Collections.emptyList();
         }
     }
 }

@@ -76,7 +76,7 @@ class EssentialsSpawnPlayerListener implements Listener {
             List<String> spawnOnJoinGroups = ess.getSettings().getSpawnOnJoinGroups();
             if (!spawnOnJoinGroups.isEmpty()) {
                 final User user = ess.getUser(player);
-
+                
                 if (ess.getSettings().isUserInSpawnOnJoinGroup(user) && !user.isAuthorized("essentials.spawn-on-join.exempt")) {
                     ess.scheduleSyncDelayedTask(() -> {
                         Location spawn = spawns.getSpawn(user.getGroup());

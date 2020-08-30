@@ -3,13 +3,10 @@ package com.earth2me.essentials.geoip;
 import com.earth2me.essentials.EssentialsConf;
 import com.earth2me.essentials.IConf;
 import com.earth2me.essentials.User;
-import com.ice.tar.TarEntry;
-import com.ice.tar.TarInputStream;
 import com.maxmind.geoip2.DatabaseReader;
-import com.maxmind.geoip2.exception.AddressNotFoundException;
-import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.model.CountryResponse;
+import com.maxmind.geoip2.exception.*;
 import net.ess3.api.IEssentials;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,22 +16,24 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.*;
 import java.net.*;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.logging.Level;
+import java.util.Date;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
+import java.util.Arrays;
+import com.ice.tar.TarInputStream;
+import com.ice.tar.TarEntry;
 
 import static com.earth2me.essentials.I18n.tl;
 
 
 public class EssentialsGeoIPPlayerListener implements Listener, IConf {
-    private static final Logger logger = Logger.getLogger("EssentialsGeoIP");
-    private final EssentialsConf config;
-    private final transient IEssentials ess;
     private DatabaseReader mmreader = null; // initialize maxmind geoip2 reader
+    private static final Logger logger = Logger.getLogger("EssentialsGeoIP");
     private File databaseFile;
     private File dataFolder;
+    private final EssentialsConf config;
+    private final transient IEssentials ess;
 
     EssentialsGeoIPPlayerListener(File dataFolder, IEssentials ess) {
         this.ess = ess;
@@ -151,7 +150,7 @@ public class EssentialsGeoIPPlayerListener implements Listener, IConf {
         } else if (config.getBoolean("database.update.enable", true)) {
             // try to update expired mmdb files
             long diff = new Date().getTime() - databaseFile.lastModified();
-            if (diff / 24 / 3600 / 1000 > config.getLong("database.update.by-every-x-days", 30)) {
+            if (diff/24/3600/1000>config.getLong("database.update.by-every-x-days", 30)) {
                 downloadDatabase();
             }
         }
@@ -164,7 +163,7 @@ public class EssentialsGeoIPPlayerListener implements Listener, IConf {
                 if ("zh".equalsIgnoreCase(locale)) {
                     locale = "zh-CN";
                 }
-                mmreader = new DatabaseReader.Builder(databaseFile).locales(Arrays.asList(locale, "en")).build();
+                mmreader = new DatabaseReader.Builder(databaseFile).locales(Arrays.asList(locale,"en")).build();
             } else {
                 mmreader = new DatabaseReader.Builder(databaseFile).build();
             }

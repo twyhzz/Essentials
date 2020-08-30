@@ -56,8 +56,8 @@ public class FlatItemDb extends AbstractItemDb {
         this.reset();
 
         String json = file.getLines().stream()
-                .filter(line -> !line.startsWith("#"))
-                .collect(Collectors.joining());
+            .filter(line -> !line.startsWith("#"))
+            .collect(Collectors.joining());
 
         this.loadJSON(String.join("\n", json));
 
@@ -88,8 +88,7 @@ public class FlatItemDb extends AbstractItemDb {
                     String target = element.getAsString();
                     itemAliases.put(key, target);
                     valid = true;
-                } catch (Exception ignored) {
-                }
+                } catch (Exception ignored) {}
             }
 
             if (valid) {

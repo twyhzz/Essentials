@@ -17,7 +17,7 @@ public interface IItemDb {
     /**
      * Create a stack from the given name with the given quantity.
      *
-     * @param name     Item name to look up in the database
+     * @param name Item name to look up in the database
      * @param quantity Quantity of the item stack
      * @return The requested item stack
      * @throws Exception if the item stack cannot be created
@@ -30,7 +30,7 @@ public interface IItemDb {
 
     /**
      * Create a stack from the given name with the maximum stack size for that material.
-     * <p>
+     *
      * Note that this will always check against resolver functions from other plugins as well.
      * To avoid this behaviour, use net.ess3.api.IItemDb#get(String name, boolean useResolvers).
      *
@@ -148,7 +148,7 @@ public interface IItemDb {
      * Convert legacy ID and damage value to Material. Used for conversion from item IDs to
      * modern names.
      *
-     * @param id     Legacy ID
+     * @param id Legacy ID
      * @param damage Damage value
      * @return Material
      */

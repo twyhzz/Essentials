@@ -16,11 +16,10 @@ import static com.earth2me.essentials.I18n.tl;
 
 
 public class LocationUtil {
-    public static final int RADIUS = 3;
-    public static final Vector3D[] VOLUME;
     // Water types used for TRANSPARENT_MATERIALS and is-water-safe config option
     private static final Set<Material> WATER_TYPES =
             EnumUtil.getAllMatching(Material.class, "WATER", "FLOWING_WATER");
+
     // The player can stand inside these materials
     private static final Set<Material> HOLLOW_MATERIALS = new HashSet<>();
     private static final Set<Material> TRANSPARENT_MATERIALS = new HashSet<>();
@@ -37,6 +36,34 @@ public class LocationUtil {
         TRANSPARENT_MATERIALS.addAll(WATER_TYPES);
     }
 
+    public static void setIsWaterSafe(boolean isWaterSafe) {
+        if (isWaterSafe) {
+            HOLLOW_MATERIALS.addAll(WATER_TYPES);
+        } else {
+            HOLLOW_MATERIALS.removeAll(WATER_TYPES);
+        }
+    }
+
+    public static final int RADIUS = 3;
+    public static final Vector3D[] VOLUME;
+
+    public static ItemStack convertBlockToItem(final Block block) {
+        return new ItemStack(block.getType(), 1);
+    }
+
+
+    public static class Vector3D {
+        public int x;
+        public int y;
+        public int z;
+
+        Vector3D(int x, int y, int z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+    }
+
     static {
         List<Vector3D> pos = new ArrayList<>();
         for (int x = -RADIUS; x <= RADIUS; x++) {
@@ -50,24 +77,11 @@ public class LocationUtil {
         VOLUME = pos.toArray(new Vector3D[0]);
     }
 
-    public static void setIsWaterSafe(boolean isWaterSafe) {
-        if (isWaterSafe) {
-            HOLLOW_MATERIALS.addAll(WATER_TYPES);
-        } else {
-            HOLLOW_MATERIALS.removeAll(WATER_TYPES);
-        }
-    }
-
-    public static ItemStack convertBlockToItem(final Block block) {
-        return new ItemStack(block.getType(), 1);
-    }
-
     public static Location getTarget(final LivingEntity entity) throws Exception {
         Block block = null;
         try {
             block = entity.getTargetBlock(TRANSPARENT_MATERIALS, 300);
-        } catch (NoSuchMethodError ignored) {
-        } // failing now :(
+        } catch (NoSuchMethodError ignored) {} // failing now :(
         if (block == null) {
             throw new Exception("Not targeting a block");
         }
@@ -110,8 +124,7 @@ public class LocationUtil {
             if (below.getType() == Material.valueOf("FLOWING_LAVA")) {
                 return true;
             }
-        } catch (Exception ignored) {
-        } // 1.13 LAVA uses Levelled
+        } catch (Exception ignored) {} // 1.13 LAVA uses Levelled
 
         Material PORTAL = EnumUtil.getMaterial("NETHER_PORTAL", "PORTAL");
 
@@ -224,17 +237,5 @@ public class LocationUtil {
         }
 
         return y < 0;
-    }
-
-    public static class Vector3D {
-        public int x;
-        public int y;
-        public int z;
-
-        Vector3D(int x, int y, int z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
     }
 }

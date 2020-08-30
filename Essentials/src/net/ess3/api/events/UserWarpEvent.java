@@ -3,10 +3,10 @@ package net.ess3.api.events;
 import com.earth2me.essentials.Trade;
 import net.ess3.api.IUser;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
 /**
  * Called when the player use the command /warp
  */
@@ -26,10 +26,6 @@ public class UserWarpEvent extends Event implements Cancellable {
         this.trade = trade;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
     public IUser getUser() {
         return user;
     }
@@ -38,17 +34,16 @@ public class UserWarpEvent extends Event implements Cancellable {
         return warp;
     }
 
-    public void setWarp(String warp) {
-        this.warp = warp;
-    }
-
     /**
      * Getting payment handling information
-     *
      * @return The payment handling class
      */
     public Trade getTrade() {
         return trade;
+    }
+
+    public void setWarp(String warp) {
+        this.warp = warp;
     }
 
     @Override
@@ -63,6 +58,10 @@ public class UserWarpEvent extends Event implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

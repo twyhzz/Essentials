@@ -3,7 +3,16 @@ package com.earth2me.essentials;
 import com.earth2me.essentials.utils.EnumUtil;
 import com.earth2me.essentials.utils.VersionUtil;
 import net.ess3.nms.refl.ReflUtil;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fox;
+import org.bukkit.entity.Llama;
+import org.bukkit.entity.MushroomCow;
+import org.bukkit.entity.Ocelot;
+import org.bukkit.entity.Panda;
+import org.bukkit.entity.Parrot;
+import org.bukkit.entity.TropicalFish;
+import org.bukkit.entity.Villager;
 
 import java.lang.reflect.Method;
 
@@ -28,6 +37,70 @@ public class MobCompat {
     // Constants for mobs that have changed since earlier versions
     public static final EntityType CAT = getEntityType("CAT", "OCELOT");
     public static final EntityType ZOMBIFIED_PIGLIN = getEntityType("ZOMBIFIED_PIGLIN", "PIG_ZOMBIE");
+
+    public enum CatType {
+        // These are (loosely) Mojang names for the cats
+        SIAMESE("SIAMESE", "SIAMESE_CAT"),
+        WHITE("WHITE", "SIAMESE_CAT"),
+        RED("RED", "RED_CAT"),
+        TABBY("TABBY", "RED_CAT"),
+        TUXEDO("BLACK", "BLACK_CAT"),
+        BRITISH_SHORTHAIR("BRITISH_SHORTHAIR", "SIAMESE_CAT"),
+        CALICO("CALICO", "RED_CAT"),
+        PERSIAN("PERSIAN", "RED_CAT"),
+        RAGDOLL("RAGDOLL", "SIAMESE_CAT"),
+        JELLIE("JELLIE", "SIAMESE_CAT"),
+        BLACK("ALL_BLACK", "BLACK_CAT"),
+        ;
+
+        private final String catTypeName;
+        private final String ocelotTypeName;
+
+        CatType(final String catTypeName, final String ocelotTypeName) {
+            this.catTypeName = catTypeName;
+            this.ocelotTypeName = ocelotTypeName;
+        }
+    }
+
+    public enum VillagerProfession {
+        // These are 1.14+ villager professions mapped to their respective pre-V&P profession and career
+        NONE("FARMER", "FARMER", "NONE"),
+        ARMORER("BLACKSMITH", "ARMORER"),
+        BUTCHER("FARMER", "BUTCHER"),
+        CARTOGRAPHER("LIBRARIAN", "CARTOGRAPHER"),
+        CLERIC("PRIEST", "CLERIC"),
+        FARMER("FARMER", "FARMER"),
+        FISHERMAN("FARMER", "FISHERMAN"),
+        FLETCHER("FARMER", "FLETCHER"),
+        LEATHERWORKER("BUTCHER", "LEATHERWORKER"),
+        LIBRARIAN("LIBRARIAN", "LIBRARIAN"),
+        MASON(null, null, "MASON"),
+        NITWIT("NITWIT", "NITWIT"),
+        SHEPHERD("FARMER", "SHEPHERD"),
+        TOOLSMITH("BLACKSMITH", "TOOL_SMITH", "TOOLSMITH"),
+        WEAPONSMITH("BLACKSMITH", "WEAPON_SMITH", "WEAPONSMITH"),
+        ;
+
+        private final String oldProfession;
+        private final String oldCareer;
+        private final String newProfession;
+
+        VillagerProfession(final String oldProfession, final String career) {
+            this.oldProfession = oldProfession;
+            this.oldCareer = career;
+            this.newProfession = career;
+        }
+
+        VillagerProfession(final String oldProfession, final String oldCareer, final String newProfession) {
+            this.oldProfession = oldProfession;
+            this.oldCareer = oldCareer;
+            this.newProfession = newProfession;
+        }
+
+        private Villager.Profession asEnum() {
+            return EnumUtil.valueOf(Villager.Profession.class, newProfession, oldProfession);
+        }
+    }
 
     // Older cats are Ocelots, whereas 1.14+ cats are Cats
     public static void setCatType(final Entity entity, final CatType type) {
@@ -136,70 +209,6 @@ public class MobCompat {
         }
         if (entity instanceof Fox) {
             ((Fox) entity).setFoxType(Fox.Type.valueOf(type));
-        }
-    }
-
-    public enum CatType {
-        // These are (loosely) Mojang names for the cats
-        SIAMESE("SIAMESE", "SIAMESE_CAT"),
-        WHITE("WHITE", "SIAMESE_CAT"),
-        RED("RED", "RED_CAT"),
-        TABBY("TABBY", "RED_CAT"),
-        TUXEDO("BLACK", "BLACK_CAT"),
-        BRITISH_SHORTHAIR("BRITISH_SHORTHAIR", "SIAMESE_CAT"),
-        CALICO("CALICO", "RED_CAT"),
-        PERSIAN("PERSIAN", "RED_CAT"),
-        RAGDOLL("RAGDOLL", "SIAMESE_CAT"),
-        JELLIE("JELLIE", "SIAMESE_CAT"),
-        BLACK("ALL_BLACK", "BLACK_CAT"),
-        ;
-
-        private final String catTypeName;
-        private final String ocelotTypeName;
-
-        CatType(final String catTypeName, final String ocelotTypeName) {
-            this.catTypeName = catTypeName;
-            this.ocelotTypeName = ocelotTypeName;
-        }
-    }
-
-    public enum VillagerProfession {
-        // These are 1.14+ villager professions mapped to their respective pre-V&P profession and career
-        NONE("FARMER", "FARMER", "NONE"),
-        ARMORER("BLACKSMITH", "ARMORER"),
-        BUTCHER("FARMER", "BUTCHER"),
-        CARTOGRAPHER("LIBRARIAN", "CARTOGRAPHER"),
-        CLERIC("PRIEST", "CLERIC"),
-        FARMER("FARMER", "FARMER"),
-        FISHERMAN("FARMER", "FISHERMAN"),
-        FLETCHER("FARMER", "FLETCHER"),
-        LEATHERWORKER("BUTCHER", "LEATHERWORKER"),
-        LIBRARIAN("LIBRARIAN", "LIBRARIAN"),
-        MASON(null, null, "MASON"),
-        NITWIT("NITWIT", "NITWIT"),
-        SHEPHERD("FARMER", "SHEPHERD"),
-        TOOLSMITH("BLACKSMITH", "TOOL_SMITH", "TOOLSMITH"),
-        WEAPONSMITH("BLACKSMITH", "WEAPON_SMITH", "WEAPONSMITH"),
-        ;
-
-        private final String oldProfession;
-        private final String oldCareer;
-        private final String newProfession;
-
-        VillagerProfession(final String oldProfession, final String career) {
-            this.oldProfession = oldProfession;
-            this.oldCareer = career;
-            this.newProfession = career;
-        }
-
-        VillagerProfession(final String oldProfession, final String oldCareer, final String newProfession) {
-            this.oldProfession = oldProfession;
-            this.oldCareer = oldCareer;
-            this.newProfession = newProfession;
-        }
-
-        private Villager.Profession asEnum() {
-            return EnumUtil.valueOf(Villager.Profession.class, newProfession, oldProfession);
         }
     }
 

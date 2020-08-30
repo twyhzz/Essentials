@@ -14,14 +14,6 @@ public final class PluginKey {
         this.key = key;
     }
 
-    public static PluginKey random(Plugin plugin) {
-        return new PluginKey(plugin, UUID.randomUUID().toString());
-    }
-
-    public static PluginKey fromKey(Plugin plugin, String key) {
-        return new PluginKey(plugin, key);
-    }
-
     public Plugin getPlugin() {
         return plugin;
     }
@@ -46,6 +38,14 @@ public final class PluginKey {
             return false;
         }
         return this == o || this.toString().equals(o.toString());
+    }
+
+    public static PluginKey random(Plugin plugin) {
+        return new PluginKey(plugin, UUID.randomUUID().toString());
+    }
+
+    public static PluginKey fromKey(Plugin plugin, String key) {
+        return new PluginKey(plugin, key);
     }
 
 }

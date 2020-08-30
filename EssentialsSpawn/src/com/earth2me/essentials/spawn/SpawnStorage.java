@@ -25,12 +25,10 @@ public class SpawnStorage extends AsyncStorageObjectHolder<Spawns> implements IE
     }
 
     @Override
-    public void finishRead() {
-    }
+    public void finishRead() { }
 
     @Override
-    public void finishWrite() {
-    }
+    public void finishWrite() { }
 
     void setSpawn(final Location loc, final String group) {
         acquireWriteLock();

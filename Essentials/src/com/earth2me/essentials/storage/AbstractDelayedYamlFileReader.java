@@ -11,9 +11,9 @@ import java.util.logging.Level;
 
 
 public abstract class AbstractDelayedYamlFileReader<T extends StorageObject> implements Runnable {
-    protected final transient IEssentials plugin;
     private final transient File file;
     private final transient Class<T> clazz;
+    protected final transient IEssentials plugin;
 
     public AbstractDelayedYamlFileReader(final IEssentials ess, final File file, final Class<T> clazz) {
         this.file = file;

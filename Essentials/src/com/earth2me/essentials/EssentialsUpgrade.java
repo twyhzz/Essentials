@@ -30,11 +30,6 @@ import static com.earth2me.essentials.I18n.tl;
 
 public class EssentialsUpgrade {
     private final static Logger LOGGER = Logger.getLogger("Essentials");
-    private static final FileFilter YML_FILTER = pathname -> pathname.isFile() && pathname.getName().endsWith(".yml");
-    private static final String PATTERN_CONFIG_UUID_REGEX = "(?mi)^uuid:\\s*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\\s*$";
-    private static final Pattern PATTERN_CONFIG_UUID = Pattern.compile(PATTERN_CONFIG_UUID_REGEX);
-    private static final String PATTERN_CONFIG_NAME_REGEX = "(?mi)^lastAccountName:\\s*[\"\']?(\\w+)[\"\']?\\s*$";
-    private static final Pattern PATTERN_CONFIG_NAME = Pattern.compile(PATTERN_CONFIG_NAME_REGEX);
     private final transient IEssentials ess;
     private final transient EssentialsConf doneFile;
 
@@ -45,89 +40,6 @@ public class EssentialsUpgrade {
         }
         doneFile = new EssentialsConf(new File(ess.getDataFolder(), "upgrades-done.yml"));
         doneFile.load();
-    }
-
-    public static void uuidFileConvert(IEssentials ess, Boolean ignoreUFCache) {
-        ess.getLogger().info("Starting Essentials UUID userdata conversion");
-
-        final File userdir = new File(ess.getDataFolder(), "userdata");
-        if (!userdir.exists()) {
-            return;
-        }
-
-        int countFiles = 0;
-        int countFails = 0;
-        int countEssCache = 0;
-        int countBukkit = 0;
-
-        ess.getLogger().info("Found " + userdir.list().length + " files to convert...");
-
-        for (String string : userdir.list()) {
-            if (!string.endsWith(".yml") || string.length() < 5) {
-                continue;
-            }
-
-            final int showProgress = countFiles % 250;
-
-            if (showProgress == 0) {
-                ess.getUserMap().getUUIDMap().forceWriteUUIDMap();
-                ess.getLogger().info("Converted " + countFiles + "/" + userdir.list().length);
-            }
-
-            countFiles++;
-
-            String name = string.substring(0, string.length() - 4);
-            EssentialsUserConf config;
-            UUID uuid = null;
-            try {
-                uuid = UUID.fromString(name);
-            } catch (IllegalArgumentException ex) {
-                File file = new File(userdir, string);
-                EssentialsConf conf = new EssentialsConf(file);
-                conf.load();
-                conf.setProperty("lastAccountName", name);
-                conf.save();
-
-                String uuidConf = ignoreUFCache ? "force-uuid" : "uuid";
-
-                String uuidString = conf.getString(uuidConf, null);
-
-                for (int i = 0; i < 4; i++) {
-                    try {
-                        uuid = UUID.fromString(uuidString);
-                        countEssCache++;
-                        break;
-                    } catch (Exception ex2) {
-                        if (conf.getBoolean("npc", false)) {
-                            uuid = UUID.nameUUIDFromBytes(("NPC:" + name).getBytes(Charsets.UTF_8));
-                            break;
-                        }
-
-                        org.bukkit.OfflinePlayer player = ess.getServer().getOfflinePlayer(name);
-                        uuid = player.getUniqueId();
-                    }
-
-                    if (uuid != null) {
-                        countBukkit++;
-                        break;
-                    }
-                }
-
-                if (uuid != null) {
-                    conf.forceSave();
-                    config = new EssentialsUserConf(name, uuid, new File(userdir, uuid + ".yml"));
-                    config.convertLegacyFile();
-                    ess.getUserMap().trackUUID(uuid, name, false);
-                    continue;
-                }
-                countFails++;
-            }
-        }
-        ess.getUserMap().getUUIDMap().forceWriteUUIDMap();
-
-        ess.getLogger().info("Converted " + countFiles + "/" + countFiles + ".  Conversion complete.");
-        ess.getLogger().info("Converted via cache: " + countEssCache + " :: Converted via lookup: " + countBukkit + " :: Failed to convert: " + countFails);
-        ess.getLogger().info("To rerun the conversion type /essentials uuidconvert");
     }
 
     public void convertIgnoreList() {
@@ -543,60 +455,6 @@ public class EssentialsUpgrade {
         doneFile.save();
     }
 
-    private void uuidFileChange() {
-        if (doneFile.getBoolean("uuidFileChange", false)) {
-            return;
-        }
-
-        Boolean ignoreUFCache = doneFile.getBoolean("ignore-userfiles-cache", false);
-
-        final File userdir = new File(ess.getDataFolder(), "userdata");
-        if (!userdir.exists()) {
-            return;
-        }
-
-        int countFiles = 0;
-        int countReqFiles = 0;
-        for (String string : userdir.list()) {
-            if (!string.endsWith(".yml") || string.length() < 5) {
-                continue;
-            }
-
-            countFiles++;
-
-            final String name = string.substring(0, string.length() - 4);
-            UUID uuid = null;
-
-            try {
-                uuid = UUID.fromString(name);
-            } catch (IllegalArgumentException ex) {
-                countReqFiles++;
-            }
-
-            if (countFiles > 100) {
-                break;
-            }
-        }
-
-        if (countReqFiles < 1) {
-            return;
-        }
-
-        ess.getLogger().info("#### Starting Essentials UUID userdata conversion in a few seconds. ####");
-        ess.getLogger().info("We recommend you take a backup of your server before upgrading from the old username system.");
-
-        try {
-            Thread.sleep(15000);
-        } catch (InterruptedException ex) {
-            // NOOP
-        }
-
-        uuidFileConvert(ess, ignoreUFCache);
-
-        doneFile.setProperty("uuidFileChange", true);
-        doneFile.save();
-    }
-
     public void banFormatChange() {
         if (doneFile.getBoolean("banFormatChange", false)) {
             return;
@@ -670,6 +528,14 @@ public class EssentialsUpgrade {
             Bukkit.getBanList(BanList.Type.NAME).addBan(playerName, banReason, new Date(banTimeout), Console.NAME);
         }
     }
+
+    private static final FileFilter YML_FILTER = pathname -> pathname.isFile() && pathname.getName().endsWith(".yml");
+
+    private static final String PATTERN_CONFIG_UUID_REGEX = "(?mi)^uuid:\\s*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\\s*$";
+    private static final Pattern PATTERN_CONFIG_UUID = Pattern.compile(PATTERN_CONFIG_UUID_REGEX);
+
+    private static final String PATTERN_CONFIG_NAME_REGEX = "(?mi)^lastAccountName:\\s*[\"\']?(\\w+)[\"\']?\\s*$";
+    private static final Pattern PATTERN_CONFIG_NAME = Pattern.compile(PATTERN_CONFIG_NAME_REGEX);
 
     private void repairUserMap() {
         if (doneFile.getBoolean("userMapRepaired", false)) {
@@ -756,7 +622,6 @@ public class EssentialsUpgrade {
         deleteOldItemsCsv();
         updateSpawnsToNewSpawnsConfig();
         updateJailsToNewJailsConfig();
-        uuidFileChange();
         banFormatChange();
         warnMetrics();
         repairUserMap();

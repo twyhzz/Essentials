@@ -105,8 +105,8 @@ public class Commandwarp extends EssentialsCommand {
     private List<String> getAvailableWarpsFor(final IUser user) {
         if (ess.getSettings().getPerWarpPermission() && user != null) {
             return ess.getWarps().getList().stream()
-                    .filter(warpName -> user.isAuthorized("essentials.warps." + warpName))
-                    .collect(Collectors.toList());
+                .filter(warpName -> user.isAuthorized("essentials.warps." + warpName))
+                .collect(Collectors.toList());
         }
 
         return new ArrayList<>(ess.getWarps().getList());

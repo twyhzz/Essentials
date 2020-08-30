@@ -19,10 +19,10 @@ public class Backup implements Runnable {
     private static final Logger LOGGER = Logger.getLogger("Essentials");
     private transient final Server server;
     private transient final IEssentials ess;
-    private final AtomicBoolean pendingShutdown = new AtomicBoolean(false);
     private transient boolean running = false;
     private transient int taskId = -1;
     private transient boolean active = false;
+    private final AtomicBoolean pendingShutdown = new AtomicBoolean(false);
     private transient CompletableFuture<Object> taskLock = null;
 
     public Backup(final IEssentials ess) {

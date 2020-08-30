@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/providers/1_8Provider/1_8Provider.iml" filepath="$PROJECT_DIR$/providers/1_8Provider/1_8Provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/providers/BaseProviders/BaseProviders.iml" filepath="$PROJECT_DIR$/providers/BaseProviders/BaseProviders.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Essentials/EssentialsX.iml" filepath="$PROJECT_DIR$/Essentials/EssentialsX.iml" />
+      <module fileurl="file://$PROJECT_DIR$/EssentialsAntiBuild/EssentialsXAntiBuild.iml" filepath="$PROJECT_DIR$/EssentialsAntiBuild/EssentialsXAntiBuild.iml" />
+      <module fileurl="file://$PROJECT_DIR$/EssentialsChat/EssentialsXChat.iml" filepath="$PROJECT_DIR$/EssentialsChat/EssentialsXChat.iml" />
+      <module fileurl="file://$PROJECT_DIR$/EssentialsGeoIP/EssentialsXGeoIP.iml" filepath="$PROJECT_DIR$/EssentialsGeoIP/EssentialsXGeoIP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/EssentialsXParent.iml" filepath="$PROJECT_DIR$/EssentialsXParent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/EssentialsProtect/EssentialsXProtect.iml" filepath="$PROJECT_DIR$/EssentialsProtect/EssentialsXProtect.iml" />
+      <module fileurl="file://$PROJECT_DIR$/EssentialsSpawn/EssentialsXSpawn.iml" filepath="$PROJECT_DIR$/EssentialsSpawn/EssentialsXSpawn.iml" />
+      <module fileurl="file://$PROJECT_DIR$/EssentialsXMPP/EssentialsXXMPP.iml" filepath="$PROJECT_DIR$/EssentialsXMPP/EssentialsXXMPP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/providers/NMSReflectionProvider/NMSReflectionProvider.iml" filepath="$PROJECT_DIR$/providers/NMSReflectionProvider/NMSReflectionProvider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/providers/PaperProvider/PaperProvider.iml" filepath="$PROJECT_DIR$/providers/PaperProvider/PaperProvider.iml" />
+    </modules>
+  </component>
+</project>

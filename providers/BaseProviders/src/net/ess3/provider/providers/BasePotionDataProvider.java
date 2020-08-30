@@ -28,10 +28,6 @@ public class BasePotionDataProvider implements PotionMetaProvider {
             .put(14, PotionType.INVISIBILITY)
             .build();
 
-    private static int getBit(int n, int k) {
-        return (n >> k) & 1;
-    }
-
     @Override
     public ItemStack createPotionItem(Material initial, int effectId) {
         ItemStack potion = new ItemStack(initial, 1);
@@ -62,6 +58,10 @@ public class BasePotionDataProvider implements PotionMetaProvider {
         potion.setItemMeta(meta);
 
         return potion;
+    }
+
+    private static int getBit(int n, int k) {
+        return (n >> k) & 1;
     }
 
     @Override

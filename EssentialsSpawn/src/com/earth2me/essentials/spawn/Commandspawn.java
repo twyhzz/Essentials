@@ -41,7 +41,7 @@ public class Commandspawn extends EssentialsCommand {
         } else {
             respawn(user.getSource(), user, user, charge, commandLabel, new CompletableFuture<>());
         }
-
+        
         throw new NoChargeException();
     }
 

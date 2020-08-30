@@ -21,14 +21,14 @@ import static com.earth2me.essentials.I18n.tl;
 
 
 public class Commandhat extends EssentialsCommand {
+    public Commandhat() {
+        super("hat");
+    }
+
     /**
      * The prefix for hat prevention commands
      */
     private static final String PERM_PREFIX = "essentials.hat.prevent-type.";
-
-    public Commandhat() {
-        super("hat");
-    }
 
     /**
      * Register permissions used by this command.

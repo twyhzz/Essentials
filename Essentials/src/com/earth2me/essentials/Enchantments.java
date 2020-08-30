@@ -158,8 +158,7 @@ public class Enchantments {
                 ALIASENCHANTMENTS.put("depth", depthStrider);
                 ALIASENCHANTMENTS.put("strider", depthStrider);
             }
-        } catch (IllegalArgumentException ignored) {
-        }
+        } catch (IllegalArgumentException ignored) {}
 
         // 1.9
         try {
@@ -174,8 +173,7 @@ public class Enchantments {
             if (mending != null) {
                 ENCHANTMENTS.put("mending", mending);
             }
-        } catch (IllegalArgumentException ignored) {
-        }
+        } catch (IllegalArgumentException ignored) {}
 
         // 1.11
         try {
@@ -199,8 +197,7 @@ public class Enchantments {
                 ALIASENCHANTMENTS.put("sweepedge", sweeping);
                 ALIASENCHANTMENTS.put("sweeping", sweeping);
             }
-        } catch (IllegalArgumentException ignored) {
-        }
+        } catch (IllegalArgumentException ignored) {}
 
 
         try { // 1.13
@@ -232,8 +229,7 @@ public class Enchantments {
                 ALIASENCHANTMENTS.put("chaneling", channelling);
                 ALIASENCHANTMENTS.put("channel", channelling);
             }
-        } catch (IllegalArgumentException ignored) {
-        }
+        } catch (IllegalArgumentException ignored) {}
 
 
         try { // 1.14
@@ -253,8 +249,7 @@ public class Enchantments {
             if (piercing != null) {
                 ENCHANTMENTS.put("piercing", piercing);
             }
-        } catch (IllegalArgumentException ignored) {
-        }
+        } catch (IllegalArgumentException ignored) {}
 
         try { // 1.16
             Enchantment soulspeed = Enchantment.getByName("SOUL_SPEED");
@@ -263,8 +258,7 @@ public class Enchantments {
                 ALIASENCHANTMENTS.put("soilspeed", soulspeed);
                 ALIASENCHANTMENTS.put("sandspeed", soulspeed);
             }
-        } catch (IllegalArgumentException ignored) {
-        }
+        } catch (IllegalArgumentException ignored) {}
 
         try {
             Class<?> namespacedKeyClass = Class.forName("org.bukkit.NamespacedKey");

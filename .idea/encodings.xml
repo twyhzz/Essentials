@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/Essentials/src" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/EssentialsAntiBuild/src" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/EssentialsChat/src" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/EssentialsGeoIP/src" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/EssentialsProtect/src" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/EssentialsSpawn/src" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/EssentialsXMPP/src" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/providers/1_8Provider/src" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/providers/BaseProviders/src" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/providers/NMSReflectionProvider/src" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/providers/PaperProvider/src" charset="UTF-8" />
+  </component>
+</project>

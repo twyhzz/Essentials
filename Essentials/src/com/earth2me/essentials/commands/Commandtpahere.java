@@ -36,7 +36,7 @@ public class Commandtpahere extends EssentialsCommand {
         }
         // Don't let sender request teleport twice to the same player.
         if (user.getConfigUUID().equals(player.getTeleportRequest()) && player.hasOutstandingTeleportRequest() // Check timeout
-                && player.isTpRequestHere()) { // Make sure the last teleport request was actually tpahere and not tpa
+            && player.isTpRequestHere()) { // Make sure the last teleport request was actually tpahere and not tpa
             throw new Exception(tl("requestSentAlready", player.getDisplayName()));
         }
         if (!player.isIgnoredPlayer(user)) {

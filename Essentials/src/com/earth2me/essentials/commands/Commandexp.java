@@ -47,7 +47,7 @@ public class Commandexp extends EssentialsLoopCommand {
         switch (cmd) {
             case SET: {
                 if (args.length == 3 && cmd.hasOtherPermission(user)) {
-                    loopOnlinePlayersConsumer(server, sender, false, true, args[1], player -> setExp(sender, player, args[2], false));
+                    loopOnlinePlayersConsumer(server,sender, false, true, args[1], player -> setExp(sender, player, args[2], false));
                 } else if (args.length == 2 && user != null) {
                     setExp(sender, user, args[1], false);
                 } else {
@@ -97,6 +97,32 @@ public class Commandexp extends EssentialsLoopCommand {
             }
         }
         throw new NotEnoughArgumentsException(); //Should never happen but in the impossible chance it does...
+    }
+
+    private enum ExpCommands {
+        SET,
+        GIVE,
+        TAKE,
+        RESET,
+        SHOW(false);
+
+        private final boolean permCheck;
+
+        ExpCommands() {
+            permCheck = true;
+        }
+
+        ExpCommands(boolean perm) {
+            permCheck = perm;
+        }
+
+        boolean hasPermission(IUser user) {
+            return user == null || !permCheck || user.isAuthorized("essentials.exp." + name().toLowerCase(Locale.ENGLISH));
+        }
+
+        boolean hasOtherPermission(IUser user) {
+            return user == null || user.isAuthorized("essentials.exp." + name().toLowerCase(Locale.ENGLISH) + ".others");
+        }
     }
 
     private void showExp(final CommandSource sender, final IUser target) {
@@ -191,32 +217,6 @@ public class Commandexp extends EssentialsLoopCommand {
             return getPlayers(server, sender);
         } else {
             return Collections.emptyList();
-        }
-    }
-
-    private enum ExpCommands {
-        SET,
-        GIVE,
-        TAKE,
-        RESET,
-        SHOW(false);
-
-        private final boolean permCheck;
-
-        ExpCommands() {
-            permCheck = true;
-        }
-
-        ExpCommands(boolean perm) {
-            permCheck = perm;
-        }
-
-        boolean hasPermission(IUser user) {
-            return user == null || !permCheck || user.isAuthorized("essentials.exp." + name().toLowerCase(Locale.ENGLISH));
-        }
-
-        boolean hasOtherPermission(IUser user) {
-            return user == null || user.isAuthorized("essentials.exp." + name().toLowerCase(Locale.ENGLISH) + ".others");
         }
     }
 }

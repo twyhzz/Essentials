@@ -13,6 +13,7 @@ import org.bukkit.Server;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static com.earth2me.essentials.I18n.tl;
 
@@ -139,6 +140,25 @@ public class Commandmail extends EssentialsCommand {
         throw new NotEnoughArgumentsException();
     }
 
+
+    private class SendAll implements Runnable {
+        String message;
+
+        public SendAll(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public void run() {
+            for (String userid : ess.getUserMap().getAllUniqueUsers()) {
+                User user = ess.getUserMap().getUser(userid);
+                if (user != null) {
+                    user.addMail(message);
+                }
+            }
+        }
+    }
+
     @Override
     protected List<String> getTabCompleteOptions(final Server server, final User user, final String commandLabel, final String[] args) {
         if (args.length == 1) {
@@ -181,24 +201,6 @@ public class Commandmail extends EssentialsCommand {
             return null; // Use vanilla handler
         } else {
             return Collections.emptyList();
-        }
-    }
-
-    private class SendAll implements Runnable {
-        String message;
-
-        public SendAll(String message) {
-            this.message = message;
-        }
-
-        @Override
-        public void run() {
-            for (String userid : ess.getUserMap().getAllUniqueUsers()) {
-                User user = ess.getUserMap().getUser(userid);
-                if (user != null) {
-                    user.addMail(message);
-                }
-            }
         }
     }
 }

@@ -5,18 +5,18 @@ main: com.earth2me.essentials.spawn.EssentialsSpawn
 version: ${full.version}
 website: https://essentialsx.net/
 description: Provides spawn control commands, utilizing Essentials.
-authors: [ Zenexer, ementalo, Aelux, Brettflan, KimKandor, snowleo, ceulemans, Xeology, KHobbits ]
-depend: [ Essentials ]
+authors: [Zenexer, ementalo, Aelux, Brettflan, KimKandor, snowleo, ceulemans, Xeology, KHobbits]
+depend: [Essentials]
 api-version: 1.13
 commands:
   setspawn:
     description: Sets the spawn point to your current position.
     usage: /<command> <group>
-    aliases: [ esetspawn ]
+    aliases: [esetspawn]
   spawn:
     description: Teleports to the spawn point.
     usage: /<command> [player]
-    aliases: [ espawn ]
+    aliases: [espawn]
 permissions:
   essentials.spawn-on-join.exempt:
     default: false

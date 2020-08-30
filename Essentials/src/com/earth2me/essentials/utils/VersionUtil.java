@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 
 public class VersionUtil {
 
-    public static final BukkitVersion v1_14_R01 = BukkitVersion.fromString("1.14-R0.1-SNAPSHOT");
     public static final BukkitVersion v1_8_8_R01 = BukkitVersion.fromString("1.8.8-R0.1-SNAPSHOT");
     public static final BukkitVersion v1_9_R01 = BukkitVersion.fromString("1.9-R0.1-SNAPSHOT");
     public static final BukkitVersion v1_9_4_R01 = BukkitVersion.fromString("1.9.4-R0.1-SNAPSHOT");
@@ -23,6 +22,7 @@ public class VersionUtil {
     public static final BukkitVersion v1_12_2_R01 = BukkitVersion.fromString("1.12.2-R0.1-SNAPSHOT");
     public static final BukkitVersion v1_13_0_R01 = BukkitVersion.fromString("1.13.0-R0.1-SNAPSHOT");
     public static final BukkitVersion v1_13_2_R01 = BukkitVersion.fromString("1.13.2-R0.1-SNAPSHOT");
+    public static final BukkitVersion v1_14_R01 = BukkitVersion.fromString("1.14-R0.1-SNAPSHOT");
     public static final BukkitVersion v1_14_4_R01 = BukkitVersion.fromString("1.14.4-R0.1-SNAPSHOT");
     public static final BukkitVersion v1_15_R01 = BukkitVersion.fromString("1.15-R0.1-SNAPSHOT");
     public static final BukkitVersion v1_15_2_R01 = BukkitVersion.fromString("1.15.2-R0.1-SNAPSHOT");
@@ -53,14 +53,6 @@ public class VersionUtil {
         private final int patch;
         private final double revision;
 
-        private BukkitVersion(int major, int minor, int patch, double revision, int prerelease) {
-            this.major = major;
-            this.minor = minor;
-            this.patch = patch;
-            this.revision = revision;
-            this.prerelease = prerelease;
-        }
-
         public static BukkitVersion fromString(String string) {
             Preconditions.checkNotNull(string, "string cannot be null.");
             Matcher matcher = VERSION_PATTERN.matcher(string);
@@ -80,10 +72,18 @@ public class VersionUtil {
             if (revision == null || revision.isEmpty()) revision = "0";
             if (prerelease == null || prerelease.isEmpty()) prerelease = "-1";
             return new BukkitVersion(Integer.parseInt(major),
-                    Integer.parseInt(minor),
-                    Integer.parseInt(patch),
-                    Double.parseDouble(revision),
-                    Integer.parseInt(prerelease));
+                Integer.parseInt(minor),
+                Integer.parseInt(patch),
+                Double.parseDouble(revision),
+                Integer.parseInt(prerelease));
+        }
+
+        private BukkitVersion(int major, int minor, int patch, double revision, int prerelease) {
+            this.major = major;
+            this.minor = minor;
+            this.patch = patch;
+            this.revision = revision;
+            this.prerelease = prerelease;
         }
 
         public boolean isHigherThan(BukkitVersion o) {
@@ -132,10 +132,10 @@ public class VersionUtil {
             }
             BukkitVersion that = (BukkitVersion) o;
             return major == that.major &&
-                    minor == that.minor &&
-                    patch == that.patch &&
-                    revision == that.revision &&
-                    prerelease == that.prerelease;
+                minor == that.minor &&
+                patch == that.patch &&
+                revision == that.revision &&
+                prerelease == that.prerelease;
         }
 
         @Override

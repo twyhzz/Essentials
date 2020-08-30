@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="EssentialsXGeoIP" />
+        <module name="1_8Provider" />
+        <module name="EssentialsXChat" />
+        <module name="EssentialsX" />
+        <module name="EssentialsXProtect" />
+        <module name="NMSReflectionProvider" />
+        <module name="EssentialsXAntiBuild" />
+        <module name="EssentialsXSpawn" />
+        <module name="PaperProvider" />
+        <module name="BaseProviders" />
+        <module name="EssentialsXXMPP" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="1_8Provider" target="1.8" />
+      <module name="BaseProviders" target="1.8" />
+      <module name="EssentialsX" target="1.8" />
+      <module name="EssentialsXAntiBuild" target="1.8" />
+      <module name="EssentialsXChat" target="1.8" />
+      <module name="EssentialsXGeoIP" target="1.8" />
+      <module name="EssentialsXParent" target="1.8" />
+      <module name="EssentialsXProtect" target="1.8" />
+      <module name="EssentialsXSpawn" target="1.8" />
+      <module name="EssentialsXXMPP" target="1.8" />
+      <module name="NMSReflectionProvider" target="1.8" />
+      <module name="PaperProvider" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

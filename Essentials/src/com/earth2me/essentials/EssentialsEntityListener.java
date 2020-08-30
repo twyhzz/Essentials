@@ -63,32 +63,6 @@ public class EssentialsEntityListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onDrop(final EntityDropItemEvent event) {
-        final Entity entity = event.getEntity();
-        if (!(entity instanceof Player)) {
-            return;
-        }
-        final Player player = (Player) entity;
-        final User user = ess.getUser(player);
-        if (user.isGodModeEnabled() || user.isVanished() || player.isFlying()) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onDrop(final EntityPickupItemEvent event) {
-        final Entity entity = event.getEntity();
-        if (!(entity instanceof Player)) {
-            return;
-        }
-        final Player player = (Player) entity;
-        final User user = ess.getUser(player);
-        if (user.isGodModeEnabled() || user.isVanished() || player.isFlying()) {
-            event.setCancelled(true);
-        }
-    }
-
     private void onPlayerVsPlayerDamage(final EntityDamageByEntityEvent event, final Player defender, final User attacker) {
         if (ess.getSettings().getLoginAttackDelay() > 0 && (System.currentTimeMillis() < (attacker.getLastLogin() + ess.getSettings().getLoginAttackDelay())) && !attacker.isAuthorized("essentials.pvpdelay.exempt")) {
             event.setCancelled(true);

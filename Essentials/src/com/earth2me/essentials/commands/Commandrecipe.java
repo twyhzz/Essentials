@@ -9,7 +9,11 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.inventory.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import static com.earth2me.essentials.I18n.tl;
 

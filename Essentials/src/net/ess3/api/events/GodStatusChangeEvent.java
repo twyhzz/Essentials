@@ -5,7 +5,7 @@ import net.ess3.api.IUser;
 
 /**
  * Fired when a user's god status is toggled.
- * <p>
+ *
  * Note that in older versions (original Essentials and early EssentialsX), the #getAffected
  * and #getController methods are inverted.
  */

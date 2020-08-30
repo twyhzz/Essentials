@@ -24,59 +24,6 @@ import java.util.regex.Pattern;
 import static com.earth2me.essentials.I18n.tl;
 
 
-//When adding a keyword here, you also need to add the implementation above
-enum KeywordType {
-    PLAYER(KeywordCachable.CACHEABLE),
-    DISPLAYNAME(KeywordCachable.CACHEABLE),
-    USERNAME(KeywordCachable.NOTCACHEABLE),
-    BALANCE(KeywordCachable.CACHEABLE),
-    MAILS(KeywordCachable.CACHEABLE),
-    WORLD(KeywordCachable.CACHEABLE),
-    WORLDNAME(KeywordCachable.CACHEABLE),
-    ONLINE(KeywordCachable.CACHEABLE),
-    UNIQUE(KeywordCachable.CACHEABLE),
-    WORLDS(KeywordCachable.CACHEABLE),
-    PLAYERLIST(KeywordCachable.SUBVALUE, true),
-    TIME(KeywordCachable.CACHEABLE),
-    DATE(KeywordCachable.CACHEABLE),
-    WORLDTIME12(KeywordCachable.CACHEABLE),
-    WORLDTIME24(KeywordCachable.CACHEABLE),
-    WORLDDATE(KeywordCachable.CACHEABLE),
-    COORDS(KeywordCachable.CACHEABLE),
-    TPS(KeywordCachable.CACHEABLE),
-    UPTIME(KeywordCachable.CACHEABLE),
-    IP(KeywordCachable.CACHEABLE, true),
-    ADDRESS(KeywordCachable.CACHEABLE, true),
-    PLUGINS(KeywordCachable.CACHEABLE, true),
-    VERSION(KeywordCachable.CACHEABLE, true);
-    private final KeywordCachable type;
-    private final boolean isPrivate;
-
-    KeywordType(KeywordCachable type) {
-        this.type = type;
-        this.isPrivate = false;
-    }
-
-    KeywordType(KeywordCachable type, boolean isPrivate) {
-        this.type = type;
-        this.isPrivate = isPrivate;
-    }
-
-    public KeywordCachable getType() {
-        return type;
-    }
-
-    public boolean isPrivate() {
-        return isPrivate;
-    }
-}
-
-enum KeywordCachable {
-    CACHEABLE, // This keyword can be cached as a string
-    SUBVALUE, // This keyword can be cached as a map
-    NOTCACHEABLE // This keyword should never be cached
-}
-
 public class KeywordReplacer implements IText {
     private static final Pattern KEYWORD = Pattern.compile("\\{([^\\{\\}]+)\\}");
     private static final Pattern KEYWORDSPLIT = Pattern.compile("\\:");
@@ -84,9 +31,9 @@ public class KeywordReplacer implements IText {
     private final transient List<String> replaced;
     private final transient IEssentials ess;
     private final transient boolean includePrivate;
+    private transient ExecuteTimer execTimer;
     private final transient boolean replaceSpacesWithUnderscores;
     private final EnumMap<KeywordType, Object> keywordCache = new EnumMap<>(KeywordType.class);
-    private transient ExecuteTimer execTimer;
 
     public KeywordReplacer(final IText input, final CommandSource sender, final IEssentials ess) {
         this.input = input;
@@ -363,4 +310,58 @@ public class KeywordReplacer implements IText {
     public Map<String, Integer> getBookmarks() {
         return input.getBookmarks();
     }
+}
+
+//When adding a keyword here, you also need to add the implementation above
+enum KeywordType {
+    PLAYER(KeywordCachable.CACHEABLE),
+    DISPLAYNAME(KeywordCachable.CACHEABLE),
+    USERNAME(KeywordCachable.NOTCACHEABLE),
+    BALANCE(KeywordCachable.CACHEABLE),
+    MAILS(KeywordCachable.CACHEABLE),
+    WORLD(KeywordCachable.CACHEABLE),
+    WORLDNAME(KeywordCachable.CACHEABLE),
+    ONLINE(KeywordCachable.CACHEABLE),
+    UNIQUE(KeywordCachable.CACHEABLE),
+    WORLDS(KeywordCachable.CACHEABLE),
+    PLAYERLIST(KeywordCachable.SUBVALUE, true),
+    TIME(KeywordCachable.CACHEABLE),
+    DATE(KeywordCachable.CACHEABLE),
+    WORLDTIME12(KeywordCachable.CACHEABLE),
+    WORLDTIME24(KeywordCachable.CACHEABLE),
+    WORLDDATE(KeywordCachable.CACHEABLE),
+    COORDS(KeywordCachable.CACHEABLE),
+    TPS(KeywordCachable.CACHEABLE),
+    UPTIME(KeywordCachable.CACHEABLE),
+    IP(KeywordCachable.CACHEABLE, true),
+    ADDRESS(KeywordCachable.CACHEABLE, true),
+    PLUGINS(KeywordCachable.CACHEABLE, true),
+    VERSION(KeywordCachable.CACHEABLE, true);
+    private final KeywordCachable type;
+    private final boolean isPrivate;
+
+    KeywordType(KeywordCachable type) {
+        this.type = type;
+        this.isPrivate = false;
+    }
+
+    KeywordType(KeywordCachable type, boolean isPrivate) {
+        this.type = type;
+        this.isPrivate = isPrivate;
+    }
+
+    public KeywordCachable getType() {
+        return type;
+    }
+
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+}
+
+
+enum KeywordCachable {
+    CACHEABLE, // This keyword can be cached as a string
+    SUBVALUE, // This keyword can be cached as a map
+    NOTCACHEABLE // This keyword should never be cached
 }

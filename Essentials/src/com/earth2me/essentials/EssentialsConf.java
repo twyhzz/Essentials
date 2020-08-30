@@ -36,31 +36,20 @@ import static com.earth2me.essentials.I18n.tl;
 
 public class EssentialsConf extends YamlConfiguration {
     protected static final Logger LOGGER = Logger.getLogger("Essentials");
-    protected static final Charset UTF8 = StandardCharsets.UTF_8;
-    private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
     protected final File configFile;
+    protected String templateName = null;
+    protected static final Charset UTF8 = StandardCharsets.UTF_8;
+    private Class<?> resourceClass = EssentialsConf.class;
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
     private final AtomicInteger pendingDiskWrites = new AtomicInteger(0);
     private final AtomicBoolean transaction = new AtomicBoolean(false);
-    private final byte[] bytebuffer = new byte[1024];
-    protected String templateName = null;
-    private Class<?> resourceClass = EssentialsConf.class;
 
     public EssentialsConf(final File configFile) {
         super();
         this.configFile = configFile.getAbsoluteFile();
     }
 
-    public static BigDecimal toBigDecimal(final String input, final BigDecimal def) {
-        if (input == null || input.isEmpty()) {
-            return def;
-        } else {
-            try {
-                return new BigDecimal(input, MathContext.DECIMAL128);
-            } catch (NumberFormatException | ArithmeticException e) {
-                return def;
-            }
-        }
-    }
+    private final byte[] bytebuffer = new byte[1024];
 
     public synchronized void load() {
         if (pendingDiskWrites.get() != 0) {
@@ -287,6 +276,60 @@ public class EssentialsConf extends YamlConfiguration {
         return EXECUTOR_SERVICE.submit(new WriteRunner(configFile, data, pendingDiskWrites));
     }
 
+
+    private static class WriteRunner implements Runnable {
+        private final File configFile;
+        private final String data;
+        private final AtomicInteger pendingDiskWrites;
+
+        private WriteRunner(final File configFile, final String data, final AtomicInteger pendingDiskWrites) {
+            this.configFile = configFile;
+            this.data = data;
+            this.pendingDiskWrites = pendingDiskWrites;
+        }
+
+        @Override
+        public void run() {
+            //long startTime = System.nanoTime();
+            synchronized (configFile) {
+                if (pendingDiskWrites.get() > 1) {
+                    // Writes can be skipped, because they are stored in a queue (in the executor).
+                    // Only the last is actually written.
+                    pendingDiskWrites.decrementAndGet();
+                    //LOGGER.log(Level.INFO, configFile + " skipped writing in " + (System.nanoTime() - startTime) + " nsec.");
+                    return;
+                }
+                try {
+                    Files.createParentDirs(configFile);
+
+                    if (!configFile.exists()) {
+                        try {
+                            LOGGER.log(Level.INFO, tl("creatingEmptyConfig", configFile.toString()));
+                            if (!configFile.createNewFile()) {
+                                LOGGER.log(Level.SEVERE, tl("failedToCreateConfig", configFile.toString()));
+                                return;
+                            }
+                        } catch (IOException ex) {
+                            LOGGER.log(Level.SEVERE, tl("failedToCreateConfig", configFile.toString()), ex);
+                            return;
+                        }
+                    }
+
+                    try (FileOutputStream fos = new FileOutputStream(configFile)) {
+                        try (OutputStreamWriter writer = new OutputStreamWriter(fos, UTF8)) {
+                            writer.write(data);
+                        }
+                    }
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                } finally {
+                    //LOGGER.log(Level.INFO, configFile + " written to disk in " + (System.nanoTime() - startTime) + " nsec.");
+                    pendingDiskWrites.decrementAndGet();
+                }
+            }
+        }
+    }
+
     public boolean hasProperty(final String path) {
         return isSet(path);
     }
@@ -330,8 +373,8 @@ public class EssentialsConf extends YamlConfiguration {
         return stack;
         /*
          * ,
-         * (byte)getInt(path + ".data", 0)
-         */
+		 * (byte)getInt(path + ".data", 0)
+		 */
     }
 
     public void setProperty(final String path, final ItemStack stack) {
@@ -389,6 +432,18 @@ public class EssentialsConf extends YamlConfiguration {
     public synchronized BigDecimal getBigDecimal(final String path, final BigDecimal def) {
         final String input = super.getString(path);
         return toBigDecimal(input, def);
+    }
+
+    public static BigDecimal toBigDecimal(final String input, final BigDecimal def) {
+        if (input == null || input.isEmpty()) {
+            return def;
+        } else {
+            try {
+                return new BigDecimal(input, MathContext.DECIMAL128);
+            } catch (NumberFormatException | ArithmeticException e) {
+                return def;
+            }
+        }
     }
 
     @Override
@@ -603,58 +658,5 @@ public class EssentialsConf extends YamlConfiguration {
     @Override
     public synchronized void set(String path, Object value) {
         super.set(path, value);
-    }
-
-    private static class WriteRunner implements Runnable {
-        private final File configFile;
-        private final String data;
-        private final AtomicInteger pendingDiskWrites;
-
-        private WriteRunner(final File configFile, final String data, final AtomicInteger pendingDiskWrites) {
-            this.configFile = configFile;
-            this.data = data;
-            this.pendingDiskWrites = pendingDiskWrites;
-        }
-
-        @Override
-        public void run() {
-            //long startTime = System.nanoTime();
-            synchronized (configFile) {
-                if (pendingDiskWrites.get() > 1) {
-                    // Writes can be skipped, because they are stored in a queue (in the executor).
-                    // Only the last is actually written.
-                    pendingDiskWrites.decrementAndGet();
-                    //LOGGER.log(Level.INFO, configFile + " skipped writing in " + (System.nanoTime() - startTime) + " nsec.");
-                    return;
-                }
-                try {
-                    Files.createParentDirs(configFile);
-
-                    if (!configFile.exists()) {
-                        try {
-                            LOGGER.log(Level.INFO, tl("creatingEmptyConfig", configFile.toString()));
-                            if (!configFile.createNewFile()) {
-                                LOGGER.log(Level.SEVERE, tl("failedToCreateConfig", configFile.toString()));
-                                return;
-                            }
-                        } catch (IOException ex) {
-                            LOGGER.log(Level.SEVERE, tl("failedToCreateConfig", configFile.toString()), ex);
-                            return;
-                        }
-                    }
-
-                    try (FileOutputStream fos = new FileOutputStream(configFile)) {
-                        try (OutputStreamWriter writer = new OutputStreamWriter(fos, UTF8)) {
-                            writer.write(data);
-                        }
-                    }
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                } finally {
-                    //LOGGER.log(Level.INFO, configFile + " written to disk in " + (System.nanoTime() - startTime) + " nsec.");
-                    pendingDiskWrites.decrementAndGet();
-                }
-            }
-        }
     }
 }

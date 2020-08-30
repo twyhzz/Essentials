@@ -26,7 +26,7 @@ import static com.earth2me.essentials.I18n.tl;
  *     <li>{@link IMessageRecipient#getDisplayName()}</li>
  *     <li>{@link IMessageRecipient#isReachable()}</li>
  * </ul>
- * <p>
+ *
  * The reply-recipient is wrapped in a {@link WeakReference}.
  */
 public class SimpleMessageRecipient implements IMessageRecipient {
@@ -37,16 +37,16 @@ public class SimpleMessageRecipient implements IMessageRecipient {
     private long lastMessageMs;
     private WeakReference<IMessageRecipient> replyRecipient;
 
-    public SimpleMessageRecipient(IEssentials ess, IMessageRecipient parent) {
-        this.ess = ess;
-        this.parent = parent;
-    }
-
     protected static User getUser(IMessageRecipient recipient) {
         if (recipient instanceof SimpleMessageRecipient) {
             return ((SimpleMessageRecipient) recipient).parent instanceof User ? (User) ((SimpleMessageRecipient) recipient).parent : null;
         }
         return recipient instanceof User ? (User) recipient : null;
+    }
+
+    public SimpleMessageRecipient(IEssentials ess, IMessageRecipient parent) {
+        this.ess = ess;
+        this.parent = parent;
     }
 
     @Override
@@ -59,13 +59,11 @@ public class SimpleMessageRecipient implements IMessageRecipient {
         return this.parent.getName();
     }
 
-    @Override
-    public String getDisplayName() {
+    @Override public String getDisplayName() {
         return this.parent.getDisplayName();
     }
 
-    @Override
-    public MessageResponse sendMessage(IMessageRecipient recipient, String message) {
+    @Override public MessageResponse sendMessage(IMessageRecipient recipient, String message) {
         final PrivateMessagePreSendEvent preSendEvent = new PrivateMessagePreSendEvent(parent, recipient, message);
         ess.getServer().getPluginManager().callEvent(preSendEvent);
         if (preSendEvent.isCancelled()) {
@@ -98,14 +96,14 @@ public class SimpleMessageRecipient implements IMessageRecipient {
                 User senderUser = getUser(this);
                 User recipientUser = getUser(recipient);
                 if (senderUser != null // not null if player.
-                        // Dont spy on chats involving socialspy exempt players
-                        && !senderUser.isAuthorized("essentials.chat.spy.exempt")
-                        && (recipientUser != null && !recipientUser.isAuthorized("essentials.chat.spy.exempt"))) {
+                    // Dont spy on chats involving socialspy exempt players
+                    && !senderUser.isAuthorized("essentials.chat.spy.exempt")
+                    && (recipientUser != null && !recipientUser.isAuthorized("essentials.chat.spy.exempt"))) {
                     for (User onlineUser : ess.getOnlineUsers()) {
                         if (onlineUser.isSocialSpyEnabled()
-                                // Don't send socialspy messages to message sender/receiver to prevent spam
-                                && !onlineUser.equals(senderUser)
-                                && !onlineUser.equals(recipient)) {
+                            // Don't send socialspy messages to message sender/receiver to prevent spam
+                            && !onlineUser.equals(senderUser)
+                            && !onlineUser.equals(recipient)) {
                             if (senderUser.isMuted() && ess.getSettings().getSocialSpyListenMutedPlayers()) {
                                 onlineUser.sendMessage(tl("socialMutedSpyPrefix") + tl("socialSpyMsgFormat", getDisplayName(), recipient.getDisplayName(), message));
                             } else {
@@ -154,7 +152,7 @@ public class SimpleMessageRecipient implements IMessageRecipient {
             // message sender to this recipient's replyRecipient.
             long timeout = ess.getSettings().getLastMessageReplyRecipientTimeout() * 1000;
             if (getReplyRecipient() == null || !getReplyRecipient().isReachable()
-                    || System.currentTimeMillis() - this.lastMessageMs > timeout) {
+                || System.currentTimeMillis() - this.lastMessageMs > timeout) {
                 setReplyRecipient(sender);
             }
         } else { // Old message functionality, always set the reply recipient to the last person who sent us a message.
@@ -164,14 +162,13 @@ public class SimpleMessageRecipient implements IMessageRecipient {
         return afk ? MessageResponse.SUCCESS_BUT_AFK : MessageResponse.SUCCESS;
     }
 
-    @Override
-    public boolean isReachable() {
+    @Override public boolean isReachable() {
         return this.parent.isReachable();
     }
 
     /**
      * {@inheritDoc}
-     * <p/>
+     * <p />
      * <b>This {@link com.earth2me.essentials.messaging.SimpleMessageRecipient} implementation stores the a weak reference to the recipient.</b>
      */
     @Override
@@ -181,7 +178,7 @@ public class SimpleMessageRecipient implements IMessageRecipient {
 
     /**
      * {@inheritDoc}
-     * <p/>
+     * <p />
      * <b>This {@link com.earth2me.essentials.messaging.SimpleMessageRecipient} implementation stores the a weak reference to the recipient.</b>
      */
     @Override

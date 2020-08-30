@@ -16,8 +16,8 @@ public class EnumUtil {
      * enum class. If no field is found, this method returns null.
      *
      * @param enumClass The class to search through
-     * @param names     The names of the fields to search for
-     * @param <T>       The enum to search through
+     * @param names The names of the fields to search for
+     * @param <T> The enum to search through
      * @return The first matching enum field
      */
     public static <T extends Enum> T valueOf(Class<T> enumClass, String... names) {
@@ -28,8 +28,7 @@ public class EnumUtil {
                 if (enumField.isEnumConstant()) {
                     return (T) enumField.get(null);
                 }
-            } catch (NoSuchFieldException | IllegalAccessException ignored) {
-            }
+            } catch (NoSuchFieldException | IllegalAccessException ignored) {}
         }
 
         return null;
@@ -40,8 +39,8 @@ public class EnumUtil {
      * names.
      *
      * @param enumClass The class to search through
-     * @param names     The names of the fields to search for
-     * @param <T>       The enum to search through
+     * @param names The names of the fields to search for
+     * @param <T> The enum to search through
      * @return All matching enum fields
      */
     public static <T extends Enum> Set<T> getAllMatching(Class<T> enumClass, String... names) {
@@ -54,8 +53,7 @@ public class EnumUtil {
                 if (enumField.isEnumConstant()) {
                     set.add((T) enumField.get(null));
                 }
-            } catch (NoSuchFieldException | IllegalAccessException ignored) {
-            }
+            } catch (NoSuchFieldException | IllegalAccessException ignored) {}
         }
 
         return set;

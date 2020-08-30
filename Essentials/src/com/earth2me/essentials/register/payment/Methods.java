@@ -26,13 +26,13 @@ import java.util.Set;
  * <http://aol.nexua.org>
  */
 public class Methods {
-    private static final Set<Method> Methods = new HashSet<>();
-    private static final Set<String> Dependencies = new HashSet<>();
-    private static final Set<Method> Attachables = new HashSet<>();
     private static String version = null;
     private static boolean self = false;
     private static Method Method = null;
     private static String preferred = "";
+    private static final Set<Method> Methods = new HashSet<>();
+    private static final Set<String> Dependencies = new HashSet<>();
+    private static final Set<Method> Attachables = new HashSet<>();
 
     static {
         _init();
@@ -43,6 +43,15 @@ public class Methods {
      */
     private static void _init() {
         addMethod("Vault", new com.earth2me.essentials.register.payment.methods.VaultEco());
+    }
+
+    /**
+     * Used by the plugin to setup version
+     *
+     * @param v version
+     */
+    public static void setVersion(String v) {
+        version = v;
     }
 
     /**
@@ -66,18 +75,10 @@ public class Methods {
     }
 
     /**
-     * Used by the plugin to setup version
-     *
-     * @param v version
-     */
-    public static void setVersion(String v) {
-        version = v;
-    }
-
-    /**
      * Returns an array of payment method names that have been loaded through the <code>_init</code> method.
      *
      * @return <code>Set<String></code> - Array of payment methods that are loaded.
+     *
      * @see #setMethod(PluginManager)
      */
     public static Set<String> getDependencies() {
@@ -89,6 +90,7 @@ public class Methods {
      * payments and other various economic activity.
      *
      * @param plugin Plugin data from bukkit, Internal Class file.
+     *
      * @return Method <em>or</em> Null
      */
     public static Method createMethod(Plugin plugin) {
@@ -111,6 +113,7 @@ public class Methods {
      * Verifies if Register has set a payment method for usage yet.
      *
      * @return <code>boolean</code>
+     *
      * @see #setMethod(PluginManager)
      * @see #checkDisabled(Plugin)
      */
@@ -122,6 +125,7 @@ public class Methods {
      * Checks Plugin Class against a multitude of checks to verify it's usability as a payment method.
      *
      * @param manager the plugin manager for the server
+     *
      * @return <code>boolean</code> True on success, False on failure.
      */
     public static boolean setMethod(PluginManager manager) {
@@ -224,6 +228,7 @@ public class Methods {
      * Register.
      *
      * @param method Plugin data from bukkit, Internal Class file.
+     *
      * @return <code>boolean</code>
      */
     public static boolean checkDisabled(Plugin method) {

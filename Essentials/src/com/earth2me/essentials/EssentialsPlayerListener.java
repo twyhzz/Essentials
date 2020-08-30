@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -31,7 +30,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.projectiles.ProjectileSource;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -467,10 +465,10 @@ public class EssentialsPlayerListener implements Listener {
         final boolean backListener = ess.getSettings().registerBackInListener();
         final boolean teleportInvulnerability = ess.getSettings().isTeleportInvulnerability();
         if (backListener || teleportInvulnerability) {
-            Player player = event.getPlayer();
-            if (player.hasMetadata("NPC")) {
-                return;
-            }
+        	Player player = event.getPlayer();
+        	if (player.hasMetadata("NPC")) {
+        		return;
+        	}
             final User user = ess.getUser(player);
             //There is TeleportCause.COMMMAND but plugins have to actively pass the cause in on their teleports.
             if (user.isAuthorized("essentials.back.onteleport") && backListener && (event.getCause() == TeleportCause.PLUGIN || event.getCause() == TeleportCause.COMMAND)) {
@@ -596,20 +594,6 @@ public class EssentialsPlayerListener implements Listener {
                     user.addCommandCooldown(cooldownEntry.getKey(), expiry, ess.getSettings().isCommandCooldownPersistent(fullCommand));
                 }
             }
-        }
-    }
-
-    @EventHandler
-    public void onPotionSplash(final PotionSplashEvent event) {
-        final ProjectileSource shooter = event.getEntity().getShooter();
-        if (!(shooter instanceof Player)) {
-            return;
-        }
-        final Player player = (Player) shooter;
-        final GameMode mode = player.getGameMode();
-        final User user = ess.getUser(player);
-        if (user.isGodModeEnabled() || user.isVanished() || player.isFlying() || mode != GameMode.SURVIVAL) {
-            event.setCancelled(true);
         }
     }
 

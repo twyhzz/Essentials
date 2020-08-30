@@ -19,9 +19,10 @@ public class EssentialsProtect extends JavaPlugin implements IProtect {
     private final Map<ProtectConfig, Boolean> settingsBoolean = new EnumMap<>(ProtectConfig.class);
     private final Map<ProtectConfig, String> settingsString = new EnumMap<>(ProtectConfig.class);
     private final Map<ProtectConfig, List<Material>> settingsList = new EnumMap<>(ProtectConfig.class);
-    private final EmergencyListener emListener = new EmergencyListener(this);
     private EssentialsConnect ess = null;
     private transient MetricsWrapper metrics = null;
+
+    private final EmergencyListener emListener = new EmergencyListener(this);
 
     @Override
     public void onEnable() {

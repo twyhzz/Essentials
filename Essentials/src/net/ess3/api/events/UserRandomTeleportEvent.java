@@ -26,10 +26,6 @@ public class UserRandomTeleportEvent extends Event implements Cancellable {
         this.maxRange = maxRange;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
     public IUser getUser() {
         return user;
     }
@@ -70,6 +66,10 @@ public class UserRandomTeleportEvent extends Event implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

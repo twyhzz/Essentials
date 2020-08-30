@@ -25,7 +25,6 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
     private final transient ConcurrentSkipListSet<String> keys = new ConcurrentSkipListSet<>();
     private final transient ConcurrentSkipListMap<String, UUID> names = new ConcurrentSkipListMap<>();
     private final transient ConcurrentSkipListMap<UUID, ArrayList<String>> history = new ConcurrentSkipListMap<>();
-    private final UUIDMap uuidMap;
 
     private final transient Cache<String, User> users;
     private static boolean legacy = false;
@@ -33,7 +32,6 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
     public UserMap(final IEssentials ess) {
         super();
         this.ess = ess;
-        uuidMap = new UUIDMap(ess);
         CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder();
         int maxCount = ess.getSettings().getMaxUserCacheCount();
         try {
@@ -70,7 +68,6 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
                         //Ignore these users till they rejoin.
                     }
                 }
-                uuidMap.loadAllUsers(names, history);
             }
         });
     }
@@ -89,9 +86,6 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
         } catch (ExecutionException | UncheckedExecutionException ex) {
             return null;
         }
-    }
-
-    public void trackUUID(final UUID uuid, final String name, boolean replace) {
     }
 
     @Override
@@ -115,7 +109,6 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
 
     @Override
     public void reloadConfig() {
-        getUUIDMap().forceWriteUUIDMap();
         loadAllUsersAsync(ess);
     }
 
@@ -154,10 +147,6 @@ public class UserMap extends CacheLoader<String, User> implements IConf {
 
     public List<String> getUserHistory(final UUID uuid) {
         return history.get(uuid);
-    }
-
-    public UUIDMap getUUIDMap() {
-        return uuidMap;
     }
 
     private File getUserFileFromName(final String name) {

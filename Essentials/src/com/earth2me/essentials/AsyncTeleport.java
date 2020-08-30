@@ -39,6 +39,12 @@ public class AsyncTeleport implements IAsyncTeleport {
         tpType = TeleportType.NORMAL;
     }
 
+    public enum TeleportType {
+        TPA,
+        BACK,
+        NORMAL
+    }
+
     public void cooldown(boolean check) throws Throwable {
         CompletableFuture<Boolean> exceptionFuture = new CompletableFuture<>();
         if (cooldown(check, exceptionFuture)) {
@@ -70,7 +76,7 @@ public class AsyncTeleport implements IAsyncTeleport {
                 teleportOwner.setLastTeleportTimestamp(time.getTimeInMillis());
                 return false;
             } else if (lastTime > earliestLong
-                    && cooldownApplies()) {
+                && cooldownApplies()) {
                 time.setTimeInMillis(lastTime);
                 time.add(Calendar.SECOND, (int) cooldown);
                 time.add(Calendar.MILLISECOND, (int) ((cooldown * 1000.0) % 1000.0));
@@ -94,11 +100,11 @@ public class AsyncTeleport implements IAsyncTeleport {
                 break;
             case BACK:
                 applies = !(teleportOwner.isAuthorized(globalBypassPerm) &&
-                        teleportOwner.isAuthorized("essentials.teleport.cooldown.bypass.back"));
+                    teleportOwner.isAuthorized("essentials.teleport.cooldown.bypass.back"));
                 break;
             case TPA:
                 applies = !(teleportOwner.isAuthorized(globalBypassPerm) &&
-                        teleportOwner.isAuthorized("essentials.teleport.cooldown.bypass.tpa"));
+                    teleportOwner.isAuthorized("essentials.teleport.cooldown.bypass.tpa"));
                 break;
         }
         return applies;
@@ -110,6 +116,7 @@ public class AsyncTeleport implements IAsyncTeleport {
         c.add(Calendar.MILLISECOND, (int) ((delay * 1000.0) % 1000.0));
         user.sendMessage(tl("dontMoveMessage", DateUtil.formatDateDiff(c.getTimeInMillis())));
     }
+
 
     @Override
     public void now(Location loc, boolean cooldown, TeleportCause cause, CompletableFuture<Boolean> future) {
@@ -312,9 +319,9 @@ public class AsyncTeleport implements IAsyncTeleport {
             return;
         }
         if (delay <= 0 || teleporter == null
-                || teleporter.isAuthorized("essentials.teleport.timer.bypass")
-                || teleportOwner.isAuthorized("essentials.teleport.timer.bypass")
-                || teleportee.isAuthorized("essentials.teleport.timer.bypass")) {
+            || teleporter.isAuthorized("essentials.teleport.timer.bypass")
+            || teleportOwner.isAuthorized("essentials.teleport.timer.bypass")
+            || teleportee.isAuthorized("essentials.teleport.timer.bypass")) {
             if (cooldown(false, future)) {
                 return;
             }
@@ -441,11 +448,5 @@ public class AsyncTeleport implements IAsyncTeleport {
 
     private void initTimer(long delay, IUser teleportUser, ITarget target, Trade chargeFor, TeleportCause cause, boolean respawn) {
         timedTeleport = new AsyncTimedTeleport(teleportOwner, ess, this, delay, teleportUser, target, chargeFor, cause, respawn);
-    }
-
-    public enum TeleportType {
-        TPA,
-        BACK,
-        NORMAL
     }
 }

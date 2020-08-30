@@ -19,6 +19,17 @@ public class Commandkittycannon extends EssentialsCommand {
         super("kittycannon");
     }
 
+    @Override
+    protected void run(final Server server, final User user, final String commandLabel, final String[] args) throws Exception {
+        final Entity ocelot = Mob.CAT.getType() == null ? spawnOcelot(server, user) : spawnCat(server, user);
+        ess.scheduleSyncDelayedTask(() -> {
+            final Location loc = ocelot.getLocation();
+            ocelot.remove();
+            loc.getWorld().createExplosion(loc, 0F);
+        }, 20);
+
+    }
+
     private static Ocelot spawnOcelot(Server server, User user) throws Mob.MobException {
         final Ocelot ocelot = (Ocelot) Mob.OCELOT.spawn(user.getWorld(), server, user.getBase().getEyeLocation());
         final int i = random.nextInt(Ocelot.Type.values().length);
@@ -37,16 +48,5 @@ public class Commandkittycannon extends EssentialsCommand {
         cat.setBaby();
         cat.setVelocity(user.getBase().getEyeLocation().getDirection().multiply(2));
         return cat;
-    }
-
-    @Override
-    protected void run(final Server server, final User user, final String commandLabel, final String[] args) throws Exception {
-        final Entity ocelot = Mob.CAT.getType() == null ? spawnOcelot(server, user) : spawnCat(server, user);
-        ess.scheduleSyncDelayedTask(() -> {
-            final Location loc = ocelot.getLocation();
-            ocelot.remove();
-            loc.getWorld().createExplosion(loc, 0F);
-        }, 20);
-
     }
 }

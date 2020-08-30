@@ -12,7 +12,7 @@ import java.util.Locale;
 import static com.earth2me.essentials.I18n.tl;
 
 public class Commanditemname extends EssentialsCommand {
-
+    
     public Commanditemname() {
         super("itemname");
     }

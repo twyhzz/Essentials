@@ -12,9 +12,9 @@ import org.bukkit.event.HandlerList;
  */
 public abstract class StateChangeEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
+    private boolean cancelled = false;
     IUser affected;
     IUser controller;
-    private boolean cancelled = false;
 
     public StateChangeEvent(IUser affected, IUser controller) {
         super();
@@ -26,10 +26,6 @@ public abstract class StateChangeEvent extends Event implements Cancellable {
         super(isAsync);
         this.affected = affected;
         this.controller = controller;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     /**
@@ -52,6 +48,10 @@ public abstract class StateChangeEvent extends Event implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 

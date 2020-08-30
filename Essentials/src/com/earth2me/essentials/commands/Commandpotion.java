@@ -36,7 +36,7 @@ public class Commandpotion extends EssentialsCommand {
             }
             throw new NotEnoughArgumentsException(tl("potions", StringUtil.joinList(potionslist.toArray())));
         }
-
+        
         boolean holdingPotion = stack.getType() == Material.POTION;
         if (!holdingPotion && ReflUtil.getNmsVersionObject().isHigherThanOrEqualTo(ReflUtil.V1_9_R1)) {
             holdingPotion = stack.getType() == Material.SPLASH_POTION || stack.getType() == Material.LINGERING_POTION;

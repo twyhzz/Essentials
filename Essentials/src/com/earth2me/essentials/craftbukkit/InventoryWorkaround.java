@@ -17,14 +17,6 @@ import java.util.Map;
  */
 
 public final class InventoryWorkaround {
-    /*
-    Spigot 1.9, for whatever reason, decided to merge the armor and main player inventories without providing a way
-    to access the main inventory. There's lots of ugly code in here to work around that.
-     */
-    private static final int USABLE_PLAYER_INV_SIZE = 36;
-    // Hot-ish code so cache
-    private static Boolean hasMainHandSupport = null;
-
     private InventoryWorkaround() {
     }
 
@@ -41,6 +33,12 @@ public final class InventoryWorkaround {
         }
         return -1;
     }
+
+    /*
+    Spigot 1.9, for whatever reason, decided to merge the armor and main player inventories without providing a way
+    to access the main inventory. There's lots of ugly code in here to work around that.
+     */
+    private static final int USABLE_PLAYER_INV_SIZE = 36;
 
     private static boolean isCombinedInventory(Inventory inventory) {
         return inventory instanceof PlayerInventory && inventory.getContents().length > USABLE_PLAYER_INV_SIZE;
@@ -82,7 +80,7 @@ public final class InventoryWorkaround {
         }
         return addItems(fakeInventory, items);
     }
-
+    
     public static Map<Integer, ItemStack> addAllOversizedItems(final Inventory inventory, final int oversizedStacks, final ItemStack... items) {
         ItemStack[] contents = inventory.getContents();
 
@@ -100,6 +98,7 @@ public final class InventoryWorkaround {
         }
         return overflow;
     }
+
 
     // Returns what it couldn't store
     public static Map<Integer, ItemStack> addItems(final Inventory inventory, final ItemStack... items) {
@@ -120,10 +119,10 @@ public final class InventoryWorkaround {
 
         final Map<Integer, ItemStack> leftover = new HashMap<>();
 
-        /*
+		/*
          * TODO: some optimization - Create a 'firstPartial' with a 'fromIndex' - Record the lastPartial per Material -
-         * Cache firstEmpty result
-         */
+		 * Cache firstEmpty result
+		 */
 
         // combine items
 
@@ -199,6 +198,9 @@ public final class InventoryWorkaround {
         }
         return leftover;
     }
+
+    // Hot-ish code so cache
+    private static Boolean hasMainHandSupport = null;
 
     @SuppressWarnings("deprecation")
     public static void setItemInMainHand(Player p, ItemStack item) {

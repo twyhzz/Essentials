@@ -20,17 +20,11 @@ public interface Method {
      *   iConomy plugin = ((iConomy)method.getPlugin());</pre>
      *
      * @return <code>Object</code>
+     *
      * @see #getName()
      * @see #getVersion()
      */
     Plugin getPlugin();
-
-    /**
-     * Set Plugin data.
-     *
-     * @param plugin Plugin
-     */
-    void setPlugin(Plugin plugin);
 
     /**
      * Returns the actual name of this method.
@@ -71,6 +65,7 @@ public interface Method {
      * Formats amounts into this payment methods style of currency display.
      *
      * @param amount Double
+     *
      * @return <code>String</code> - Formatted Currency Display.
      */
     String format(double amount);
@@ -86,7 +81,9 @@ public interface Method {
      * Determines the existence of a bank via name.
      *
      * @param bank Bank name
+     *
      * @return <code>boolean</code>
+     *
      * @see #hasBanks
      */
     boolean hasBank(String bank);
@@ -95,6 +92,7 @@ public interface Method {
      * Determines the existence of an account via name.
      *
      * @param name Account name
+     *
      * @return <code>boolean</code>
      */
     boolean hasAccount(String name);
@@ -104,6 +102,7 @@ public interface Method {
      *
      * @param bank Bank name
      * @param name Account name
+     *
      * @return <code>boolean</code>
      */
     boolean hasBankAccount(String bank, String name);
@@ -112,6 +111,7 @@ public interface Method {
      * Forces an account creation
      *
      * @param name Account name
+     *
      * @return <code>boolean</code>
      */
     boolean createAccount(String name);
@@ -121,6 +121,7 @@ public interface Method {
      *
      * @param name    Account name
      * @param balance Initial account balance
+     *
      * @return <code>boolean</code>
      */
     boolean createAccount(String name, Double balance);
@@ -129,6 +130,7 @@ public interface Method {
      * Returns a <code>MethodAccount</code> class for an account <code>name</code>.
      *
      * @param name Account name
+     *
      * @return <code>MethodAccount</code> <em>or</em>  <code>Null</code>
      */
     MethodAccount getAccount(String name);
@@ -138,6 +140,7 @@ public interface Method {
      *
      * @param bank Bank name
      * @param name Account name
+     *
      * @return <code>MethodBankAccount</code> <em>or</em>  <code>Null</code>
      */
     MethodBankAccount getBankAccount(String bank, String name);
@@ -146,9 +149,17 @@ public interface Method {
      * Checks to verify the compatibility between this Method and a plugin. Internal usage only, for the most part.
      *
      * @param plugin Plugin
+     *
      * @return <code>boolean</code>
      */
     boolean isCompatible(Plugin plugin);
+
+    /**
+     * Set Plugin data.
+     *
+     * @param plugin Plugin
+     */
+    void setPlugin(Plugin plugin);
 
 
     /**

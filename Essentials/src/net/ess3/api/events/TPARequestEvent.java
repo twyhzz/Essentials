@@ -20,10 +20,6 @@ public class TPARequestEvent extends Event implements Cancellable {
         this.requestToTPAHere = tpaHere;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
     public CommandSource getRequester() {
         return requester;
     }
@@ -48,6 +44,10 @@ public class TPARequestEvent extends Event implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 }
