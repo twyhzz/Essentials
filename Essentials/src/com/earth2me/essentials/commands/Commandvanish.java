@@ -1,6 +1,7 @@
 package com.earth2me.essentials.commands;
 
 import com.earth2me.essentials.CommandSource;
+import com.earth2me.essentials.ModeCooldowns;
 import com.earth2me.essentials.User;
 import net.ess3.api.events.VanishStatusChangeEvent;
 import org.bukkit.Server;
@@ -36,6 +37,8 @@ public class Commandvanish extends EssentialsToggleCommand {
         }
 
         user.setVanished(enabled);
+        ModeCooldowns.put(user.getBase());
+
         user.sendMessage(tl("vanish", user.getDisplayName(), enabled ? tl("enabled") : tl("disabled")));
 
         if (enabled) {

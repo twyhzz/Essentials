@@ -14,11 +14,13 @@ import net.ess3.api.IEssentials;
 import net.ess3.api.events.AfkStatusChangeEvent;
 import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -104,6 +106,34 @@ public class EssentialsPlayerListener implements Listener {
 
         if (ess.getSettings().isTeleportInvulnerability()) {
             user.enableInvulnerabilityAfterTeleport();
+        }
+    }
+
+    @EventHandler
+    public void onSplash(final PlayerInteractEvent event) {
+        final Player player = event.getPlayer();
+        final User user = ess.getUser(player);
+
+        final Material mainType = player.getInventory().getItemInMainHand().getType();
+        final Material offType = player.getInventory().getItemInOffHand().getType();
+
+        if((mainType == Material.SPLASH_POTION || mainType == Material.LINGERING_POTION) ||
+                (offType == Material.SPLASH_POTION || offType == Material.LINGERING_POTION)) {
+            if(user.isVanished() || user.isGodModeEnabled() || player.isFlying()) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onDamage(final EntityDamageByEntityEvent event) {
+        final Entity entity = event.getDamager();
+        if(!(entity instanceof Player)) {
+            return;
+        }
+
+        if(!ModeCooldowns.isExpired((Player) entity)) {
+            event.setCancelled(true);
         }
     }
 

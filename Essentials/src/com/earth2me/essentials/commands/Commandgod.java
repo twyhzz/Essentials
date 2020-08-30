@@ -1,6 +1,7 @@
 package com.earth2me.essentials.commands;
 
 import com.earth2me.essentials.CommandSource;
+import com.earth2me.essentials.ModeCooldowns;
 import com.earth2me.essentials.User;
 import net.ess3.api.events.GodStatusChangeEvent;
 import org.bukkit.Server;
@@ -33,6 +34,7 @@ public class Commandgod extends EssentialsToggleCommand {
         ess.getServer().getPluginManager().callEvent(godEvent);
         if (!godEvent.isCancelled()) {
             user.setGodModeEnabled(enabled);
+            ModeCooldowns.put(user.getBase());
 
             if (enabled && user.getBase().getHealth() != 0) {
                 user.getBase().setHealth(user.getBase().getMaxHealth());

@@ -11,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -60,6 +61,28 @@ public class EssentialsEntityListener implements Listener {
                 onPlayerVsPlayerDamage(event, (Player) eDefend, attacker);
                 attacker.updateActivityOnInteract(true);
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPickup(final EntityPickupItemEvent event) {
+        final Entity entity = event.getEntity();
+        if(!(entity instanceof Player)) {
+            return;
+        }
+        final Player player = (Player) entity;
+        final User user = ess.getUser(player);
+        if(user.isVanished() || player.isFlying() || user.isGodModeEnabled()) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onDrop(final PlayerDropItemEvent event) {
+        final Player player = event.getPlayer();
+        final User user = ess.getUser(player);
+        if(user.isVanished() || player.isFlying() || user.isGodModeEnabled()) {
+            event.setCancelled(true);
         }
     }
 

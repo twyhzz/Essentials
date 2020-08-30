@@ -2,6 +2,7 @@ package com.earth2me.essentials.commands;
 
 import com.earth2me.essentials.CommandSource;
 import com.earth2me.essentials.IUser;
+import com.earth2me.essentials.ModeCooldowns;
 import com.earth2me.essentials.User;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.GameMode;
@@ -61,6 +62,7 @@ public class Commandgamemode extends EssentialsLoopCommand {
         }
 
         user.getBase().setGameMode(gameMode);
+        ModeCooldowns.put(user.getBase());
         user.sendMessage(tl("gameMode", tl(user.getBase().getGameMode().toString().toLowerCase(Locale.ENGLISH)), user.getDisplayName()));
     }
 

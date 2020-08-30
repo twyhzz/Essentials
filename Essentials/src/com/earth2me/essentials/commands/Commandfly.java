@@ -1,9 +1,10 @@
 package com.earth2me.essentials.commands;
 
 import com.earth2me.essentials.CommandSource;
+import com.earth2me.essentials.ModeCooldowns;
 import com.earth2me.essentials.User;
-import org.bukkit.Server;
 import net.ess3.api.events.FlyStatusChangeEvent;
+import org.bukkit.Server;
 
 import static com.earth2me.essentials.I18n.tl;
 
@@ -38,11 +39,13 @@ public class Commandfly extends EssentialsToggleCommand {
             if (!user.getBase().getAllowFlight()) {
                 user.getBase().setFlying(false);
             }
+            ModeCooldowns.put(user.getBase());
 
             user.sendMessage(tl("flyMode", tl(enabled ? "enabled" : "disabled"), user.getDisplayName()));
             if (!sender.isPlayer() || !sender.getPlayer().equals(user.getBase())) {
                 sender.sendMessage(tl("flyMode", tl(enabled ? "enabled" : "disabled"), user.getDisplayName()));
             }
+
         }
     }
 }
